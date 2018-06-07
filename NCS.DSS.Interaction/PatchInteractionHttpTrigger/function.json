@@ -1,0 +1,19 @@
+{
+  "bindings": [
+    {
+      "authLevel": "function",
+      "name": "req",
+      "type": "httpTrigger",
+      "direction": "in",
+      "methods": [ "patch" ]
+    },
+    {
+      "name": "$return",
+      "type": "http",
+      "direction": "out"
+    }
+  ],
+  "disabled": false,
+  "entryPoint": "NCS.DSS.Interaction.PatchInteractionHttpTrigger.Run",
+  "scriptFile": "..\\bin\\NCS.DSS.Interaction.dll"
+} 
