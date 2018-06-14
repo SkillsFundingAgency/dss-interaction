@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http;
+using System.Web.Http.Description;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
@@ -12,6 +13,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger
     public static class PatchInteractionHttpTrigger
     {
         [FunctionName("Patch")]
+        [ResponseType(typeof(Models.Interaction))]
         [Display(Name = "Patch", Description = "Ability to modify/update an interaction record.")]
         public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, TraceWriter log, string customerId, string interactionId)
         {

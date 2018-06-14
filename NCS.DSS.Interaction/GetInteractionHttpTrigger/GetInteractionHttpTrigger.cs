@@ -6,12 +6,14 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web.Http.Description;
 
 namespace NCS.DSS.Interaction.GetInteractionHttpTrigger
 {
     public static class GetInteractionHttpTrigger
     {
         [FunctionName("Get")]
+        [ResponseType(typeof(Models.Interaction))]
         [Display(Name = "Put", Description = "Ability to return all interactions for a given customer.")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, TraceWriter log, string customerId)
         {
