@@ -10,8 +10,9 @@ namespace NCS.DSS.Interaction.DeleteInteractionHttpTrigger
 {
     public static class DeleteInteractionHttpTrigger
     {
+        [Disable]
         [FunctionName("Delete")]
-        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "Customers/{customerId:guid}/Interactions/{interactionId:guid}")]HttpRequestMessage req, TraceWriter log, string interactionId)
+        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, TraceWriter log, string interactionId)
         {
             log.Info("Delete Interaction C# HTTP trigger function processed a request.");
 

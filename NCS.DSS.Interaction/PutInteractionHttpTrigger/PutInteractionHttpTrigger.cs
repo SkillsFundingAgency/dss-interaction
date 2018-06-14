@@ -10,8 +10,9 @@ namespace NCS.DSS.Interaction.PutInteractionHttpTrigger
 {
     public static class PutInteractionHttpTrigger
     {
+        [Disable]
         [FunctionName("Put")]
-        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "Customers/{customerId:guid}/Interactions/{interactionId:guid}")]HttpRequestMessage req, TraceWriter log, string interactionId)
+        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, TraceWriter log, string interactionId)
         {
             log.Info("Put Interaction C# HTTP trigger function processed a request.");
 

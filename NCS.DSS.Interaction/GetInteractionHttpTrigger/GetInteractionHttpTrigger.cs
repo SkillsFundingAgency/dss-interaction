@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
@@ -11,7 +12,8 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger
     public static class GetInteractionHttpTrigger
     {
         [FunctionName("Get")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId:guid}/Interactions/")]HttpRequestMessage req, TraceWriter log)
+        [Display(Name = "Put", Description = "Ability to return all interactions for a given customer.")]
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, TraceWriter log, string customerId)
         {
             log.Info("Get Interactions C# HTTP trigger function processed a request.");
 

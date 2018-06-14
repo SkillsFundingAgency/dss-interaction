@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,7 +13,8 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger
     {
         [FunctionName("Post")]
         [ResponseType(typeof(Models.Interaction))]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId:guid}/Interactions/")]HttpRequestMessage req, TraceWriter log)
+        [Display(Name = "Post", Description = "Ability to create a new interaction resource.")]
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, TraceWriter log, string customerId)
         {
             log.Info("Post Interaction C# HTTP trigger function processed a request.");
 
