@@ -6,6 +6,7 @@ using System.Web.Http.Description;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
+using NCS.DSS.Interaction.Annotations;
 
 namespace NCS.DSS.Interaction.PostInteractionHttpTrigger
 {
@@ -13,6 +14,9 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger
     {
         [FunctionName("Post")]
         [ResponseType(typeof(Models.Interaction))]
+        [InteractionResponse(HttpStatusCode = (int)HttpStatusCode.Created, Description = "Interaction Created", ShowSchema = true)]
+        [InteractionResponse(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Unable to create Interaction", ShowSchema = false)]
+        [InteractionResponse(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Forbidden", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new interaction resource.")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, TraceWriter log, string customerId)
         {

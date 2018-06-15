@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http.Description;
+using NCS.DSS.Interaction.Annotations;
 
 namespace NCS.DSS.Interaction.GetInteractionHttpTrigger
 {
@@ -14,6 +15,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger
     {
         [FunctionName("Get")]
         [ResponseType(typeof(Models.Interaction))]
+        [InteractionResponse(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interactions found", ShowSchema = true)]
         [Display(Name = "Put", Description = "Ability to return all interactions for a given customer.")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, TraceWriter log, string customerId)
         {

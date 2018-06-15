@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http.Description;
+using NCS.DSS.Interaction.Annotations;
 
 namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger
 {
@@ -15,6 +16,8 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger
     {
         [FunctionName("GetById")]
         [ResponseType(typeof(Models.Interaction))]
+        [InteractionResponse(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interaction found", ShowSchema = true)]
+        [InteractionResponse(HttpStatusCode = (int)HttpStatusCode.NotFound, Description = "Supplied Interaction Id does not exist", ShowSchema = false)]
         [Display(Name = "Get", Description = "Ability to retrieve an individual interaction record.")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, TraceWriter log, string customerId, string interactionId)
         {
