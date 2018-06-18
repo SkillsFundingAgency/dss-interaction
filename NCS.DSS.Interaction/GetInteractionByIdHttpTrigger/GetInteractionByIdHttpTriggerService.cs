@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NCS.DSS.Interaction.ReferenceData;
 
 namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger
 {
@@ -25,8 +26,8 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger
                     TouchpointId = Guid.NewGuid(),
                     AdviserDetailsId = Guid.NewGuid(),
                     DateandTimeOfInteraction = DateTime.Today,
-                    ChannelId = 1,
-                    BusinessEventId = 2,
+                    Channel = Channel.Cobrowse,
+                    BusinessEvent = BusinessEvent.AcceptanceOfACareersAndSkillsActionPlanByTheCustomer,
                     LastModifiedDate = DateTime.Today.AddYears(-1),
                     LastModifiedTouchpointId = Guid.NewGuid()
                 },
@@ -37,8 +38,8 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger
                     TouchpointId = Guid.NewGuid(),
                     AdviserDetailsId = Guid.NewGuid(),
                     DateandTimeOfInteraction = DateTime.Today,
-                    ChannelId = 2,
-                    BusinessEventId = 3,
+                    Channel = Channel.Email,
+                    BusinessEvent = BusinessEvent.CancelAnAppointment,
                     LastModifiedDate = DateTime.Today.AddYears(-2),
                     LastModifiedTouchpointId = Guid.NewGuid()
                 },
@@ -49,8 +50,8 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger
                     TouchpointId = Guid.NewGuid(),
                     AdviserDetailsId = Guid.NewGuid(),
                     DateandTimeOfInteraction = DateTime.Today,
-                    ChannelId = 3,
-                    BusinessEventId = 4,
+                    Channel = Channel.Other,
+                    BusinessEvent = BusinessEvent.ChangesInDataSchema,
                     LastModifiedDate = DateTime.Today.AddYears(-3),
                     LastModifiedTouchpointId = Guid.NewGuid()
                 }

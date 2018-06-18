@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using NCS.DSS.Interaction.ReferenceData;
 
 namespace NCS.DSS.Interaction.Models
 {
@@ -24,10 +25,10 @@ namespace NCS.DSS.Interaction.Models
         public DateTime DateandTimeOfInteraction { get; set; }
 
         [Display(Description = "Channel reference data")]
-        public int ChannelId { get; set; }
+        public Channel Channel { get; set; }
 
         [Display(Description = "Business event reference data")]
-        public int BusinessEventId { get; set; }
+        public BusinessEvent BusinessEvent { get; set; }
         
         [DataType(DataType.DateTime)]
         [Display(Description = "Date and time of the last modification to the record.")]

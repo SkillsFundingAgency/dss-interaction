@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Globalization;
@@ -456,7 +457,27 @@ namespace NCS.DSS.Interaction.APIDefinition
             else if (inputType.IsEnum)
             {
                 opParam.type = "string";
-                opParam.@enum = Enum.GetNames(inputType);
+
+                var enumValues = new List<string>();
+
+                foreach (var item in Enum.GetValues(inputType))
+                {
+                    var memInfo = inputType.GetMember(inputType.GetEnumName(item));
+                    var descriptionAttributes = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+                    var description = string.Empty;
+
+                    if (descriptionAttributes.Length > 0)
+                        description = ((DescriptionAttribute)descriptionAttributes[0]).Description;
+
+                    if (string.IsNullOrEmpty(description))
+                        description = item.ToString();
+
+                    enumValues.Add(description);
+                }
+
+                opParam.@enum = enumValues.ToArray();
+
             }
             else if (definitions != null)
             {
