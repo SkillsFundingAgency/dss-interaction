@@ -368,6 +368,22 @@ namespace NCS.DSS.Interaction.APIDefinition
                 }
                 dynamic propDef = new ExpandoObject();
                 propDef.description = GetPropertyDescription(property);
+
+                var stringAttribute = (StringLengthAttribute)property.GetCustomAttributes(typeof(StringLengthAttribute), false).FirstOrDefault();
+
+                if (stringAttribute != null)
+                {
+                    propDef.maxLength = stringAttribute.MaximumLength;
+                    propDef.minLength = stringAttribute.MinimumLength;
+                }
+
+                var regexAttribute = (RegularExpressionAttribute)property.GetCustomAttributes(typeof(RegularExpressionAttribute), false).FirstOrDefault();
+
+                if (regexAttribute != null)
+                {
+                    propDef.pattern = regexAttribute.Pattern;
+                }
+
                 SetParameterType(property.PropertyType, propDef, definitions);
                 AddToExpando(objDef.properties, property.Name, propDef);
             }
