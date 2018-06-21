@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using NCS.DSS.Interaction.Annotations;
 using NCS.DSS.Interaction.ReferenceData;
-using NCS.DSS.WebChat.Annotations;
 
 namespace NCS.DSS.Interaction.Models
 {

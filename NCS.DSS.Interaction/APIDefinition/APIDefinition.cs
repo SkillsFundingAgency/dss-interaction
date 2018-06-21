@@ -16,7 +16,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using NCS.DSS.Interaction.Annotations;
-using NCS.DSS.WebChat.Annotations;
 
 namespace NCS.DSS.Interaction.APIDefinition
 {
