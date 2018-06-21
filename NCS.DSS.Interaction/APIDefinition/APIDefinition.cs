@@ -16,6 +16,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using NCS.DSS.Interaction.Annotations;
+using NCS.DSS.WebChat.Annotations;
 
 namespace NCS.DSS.Interaction.APIDefinition
 {
@@ -124,7 +125,7 @@ namespace NCS.DSS.Interaction.APIDefinition
                 foreach (string verb in verbs)
                 {
                     dynamic operation = new ExpandoObject();
-                    operation.operationId = ToTitleCase(functionAttr.Name) + ToTitleCase(verb);
+                    operation.operationId = ToTitleCase(functionAttr.Name);
                     operation.produces = new[] { "application/json" };
                     operation.consumes = new[] { "application/json" };
                     operation.parameters = GenerateFunctionParametersSignature(methodInfo, route, doc);
@@ -370,8 +371,11 @@ namespace NCS.DSS.Interaction.APIDefinition
                 dynamic propDef = new ExpandoObject();
                 propDef.description = GetPropertyDescription(property);
 
-                var stringAttribute = (StringLengthAttribute)property.GetCustomAttributes(typeof(StringLengthAttribute), false).FirstOrDefault();
+                var exampleAttribute = (Example)property.GetCustomAttributes(typeof(Example), false).FirstOrDefault();
+                if (exampleAttribute != null)
+                    propDef.example = exampleAttribute.Description;
 
+                var stringAttribute = (StringLengthAttribute)property.GetCustomAttributes(typeof(StringLengthAttribute), false).FirstOrDefault();
                 if (stringAttribute != null)
                 {
                     propDef.maxLength = stringAttribute.MaximumLength;
@@ -379,11 +383,9 @@ namespace NCS.DSS.Interaction.APIDefinition
                 }
 
                 var regexAttribute = (RegularExpressionAttribute)property.GetCustomAttributes(typeof(RegularExpressionAttribute), false).FirstOrDefault();
-
                 if (regexAttribute != null)
-                {
                     propDef.pattern = regexAttribute.Pattern;
-                }
+
 
                 SetParameterType(property.PropertyType, propDef, definitions);
                 AddToExpando(objDef.properties, property.Name, propDef);
@@ -473,7 +475,7 @@ namespace NCS.DSS.Interaction.APIDefinition
                     if (string.IsNullOrEmpty(description))
                         description = item.ToString();
 
-                    enumValues.Add(description);
+                    enumValues.Add(Convert.ToInt32(item) + " - " + description);
                 }
 
                 opParam.@enum = enumValues.ToArray();
