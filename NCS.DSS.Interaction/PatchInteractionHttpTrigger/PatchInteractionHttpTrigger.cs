@@ -15,8 +15,12 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger
     {
         [FunctionName("Patch")]
         [ResponseType(typeof(Models.Interaction))]
-        [InteractionResponse(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interaction updated", ShowSchema = true)]
-        [InteractionResponse(HttpStatusCode = (int)HttpStatusCode.NotFound, Description = "Supplied Interaction Id does not exist", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interaction Updated", ShowSchema = true)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interaction does not exist", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
+        [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update an interaction record.")]
         public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, TraceWriter log, string customerId, string interactionId)
         {

@@ -245,11 +245,11 @@ namespace NCS.DSS.Interaction.APIDefinition
                 }
             }
             // automatically get data(http code, description and show schema) from the new custom response class
-            var responseCodes = methodInfo.GetCustomAttributes(typeof(InteractionResponse), false);
+            var responseCodes = methodInfo.GetCustomAttributes(typeof(Response), false);
 
             foreach (var response in responseCodes)
             {
-                var interactionResponse = (InteractionResponse)response;
+                var interactionResponse = (Response)response;
 
                 if (!interactionResponse.ShowSchema)
                     responseDef = new ExpandoObject();
