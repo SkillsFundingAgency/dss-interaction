@@ -25,7 +25,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger
                     AdviserDetailsId = Guid.NewGuid(),
                     DateandTimeOfInteraction = DateTime.Today,
                     Channel = Channel.Cobrowse,
-                    BusinessEvent = BusinessEvent.AcceptanceOfACareersAndSkillsActionPlanByTheCustomer,
+                    InteractionType = InteractionType.BookAnAppointment,
                     LastModifiedDate = DateTime.Today.AddYears(-1),
                     LastModifiedTouchpointId = Guid.NewGuid()
                 },
@@ -37,7 +37,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger
                     AdviserDetailsId = Guid.NewGuid(),
                     DateandTimeOfInteraction = DateTime.Today,
                     Channel = Channel.Email,
-                    BusinessEvent = BusinessEvent.CancelAnAppointment,
+                    InteractionType = InteractionType.TransferToTouchpoint,
                     LastModifiedDate = DateTime.Today.AddYears(-2),
                     LastModifiedTouchpointId = Guid.NewGuid()
                 },
@@ -49,7 +49,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger
                     AdviserDetailsId = Guid.NewGuid(),
                     DateandTimeOfInteraction = DateTime.Today,
                     Channel = Channel.Other,
-                    BusinessEvent = BusinessEvent.ChangesInDataSchema,
+                    InteractionType = InteractionType.Other,
                     LastModifiedDate = DateTime.Today.AddYears(-3),
                     LastModifiedTouchpointId = Guid.NewGuid()
                 }

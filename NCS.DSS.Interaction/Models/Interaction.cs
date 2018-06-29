@@ -34,9 +34,9 @@ namespace NCS.DSS.Interaction.Models
         [Example(Description = "1")]
         public Channel Channel { get; set; }
 
-        [Display(Description = "Business event reference data")]
+        [Display(Description = "Interaction type reference data")]
         [Example(Description = "2")]
-        public BusinessEvent BusinessEvent { get; set; }
+        public InteractionType InteractionType { get; set; }
         
         [DataType(DataType.DateTime)]
         [Display(Description = "Date and time of the last modification to the record.")]
