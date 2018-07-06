@@ -5,19 +5,8 @@ using NCS.DSS.Interaction.ReferenceData;
 
 namespace NCS.DSS.Interaction.Models
 {
-    public class Interaction
+    public class InteractionPatch
     {
-        [Display(Description = "Unique identifier for the interaction record.")]
-        [Example(Description = "b8592ff8-af97-49ad-9fb2-e5c3c717fd85")]
-        [Newtonsoft.Json.JsonProperty(PropertyName = "id")]
-        public Guid? InteractionId { get; set; }
-
-        [Required]
-        [Display(Description = "Unique identifier of a customer.")]
-        [Example(Description = "2730af9c-fc34-4c2b-a905-c4b584b0f379")]
-        public Guid CustomerId { get; set; }
-
-        [Required]
         [Display(Description = "Unique identifier for the touchpoint with which the interaction took place.")]
         [Example(Description = "f823d23a-4006-4572-aef5-65ff085b4687")]
         public Guid TouchpointId { get; set; }
@@ -38,28 +27,15 @@ namespace NCS.DSS.Interaction.Models
         [Display(Description = "Business event reference data")]
         [Example(Description = "2")]
         public BusinessEvent BusinessEvent { get; set; }
-        
+
         [DataType(DataType.DateTime)]
         [Display(Description = "Date and time of the last modification to the record.")]
         [Example(Description = "2018-06-22T16:52:10")]
         public DateTime LastModifiedDate { get; set; }
-        
+
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
         [Example(Description = "d1307d77-af23-4cb4-b600-a60e04f8c3df")]
         public Guid LastModifiedTouchpointId { get; set; }
 
-        public void Patch(InteractionPatch interactionPatch)
-        {
-            if (interactionPatch == null)
-                return;
-
-            TouchpointId = interactionPatch.TouchpointId;
-            AdviserDetailsId = interactionPatch.AdviserDetailsId;
-            DateandTimeOfInteraction = interactionPatch.DateandTimeOfInteraction;
-            Channel = interactionPatch.Channel;
-            BusinessEvent = interactionPatch.BusinessEvent;
-            LastModifiedDate = interactionPatch.LastModifiedDate;
-            LastModifiedTouchpointId = interactionPatch.LastModifiedTouchpointId;
-        }
     }
 }
