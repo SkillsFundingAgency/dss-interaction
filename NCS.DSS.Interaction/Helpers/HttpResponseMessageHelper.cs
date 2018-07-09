@@ -21,6 +21,23 @@ namespace NCS.DSS.Interaction.Helpers
             };
         }
 
+        public static HttpResponseMessage Ok<T>(T resource)
+        {
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(resource), Encoding.UTF8, "application/json")
+            };
+        }
+
+        public static HttpResponseMessage Ok<T>(List<T> resourcesList)
+        {
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(resourcesList),
+                    System.Text.Encoding.UTF8, "application/json")
+            };
+        }
+
         #endregion
 
         #region Created(201) 
@@ -79,10 +96,7 @@ namespace NCS.DSS.Interaction.Helpers
             };
         }
 
-
         #endregion
-
-
 
     }
 }
