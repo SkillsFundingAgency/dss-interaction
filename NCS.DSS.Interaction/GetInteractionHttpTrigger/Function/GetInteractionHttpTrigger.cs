@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -8,8 +9,12 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http.Description;
 using NCS.DSS.Interaction.Annotations;
+using NCS.DSS.Interaction.Cosmos.Helper;
+using NCS.DSS.Interaction.GetInteractionHttpTrigger.Service;
+using NCS.DSS.Interaction.Helpers;
+using NCS.DSS.Interaction.Ioc;
 
-namespace NCS.DSS.Interaction.GetInteractionHttpTrigger
+namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
 {
     public static class GetInteractionHttpTrigger
     {
@@ -21,18 +26,26 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Put", Description = "Ability to return all interactions for a given customer.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, TraceWriter log, string customerId)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, TraceWriter log, string customerId,
+            [Inject]IResourceHelper resourceHelper,
+            [Inject]IGetInteractionHttpTriggerService interactionGetService)
         {
             log.Info("Get Interactions C# HTTP trigger function processed a request.");
 
-            var service = new GetInteractionHttpTriggerService();
-            var values = await service.GetInteractions();
+            if (!Guid.TryParse(customerId, out var customerGuid))
+                return HttpResponseMessageHelper.BadRequest(customerGuid);
 
-            return new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(JsonConvert.SerializeObject(values),
-                    System.Text.Encoding.UTF8, "application/json")
-            };
+            var doesCustomerExist = resourceHelper.DoesCustomerExist(customerGuid);
+
+            if (!doesCustomerExist)
+                return HttpResponseMessageHelper.NoContent("Unable to find a customer with Id of : ", customerGuid);
+
+            var interactions = await interactionGetService.GetInteractionsAsync(customerGuid);
+
+            return interactions == null ?
+                HttpResponseMessageHelper.NoContent("Unable to find a interaction for customer with Id of : ", customerGuid) :
+                HttpResponseMessageHelper.Ok(interactions);
+           
         }
     }
 }
