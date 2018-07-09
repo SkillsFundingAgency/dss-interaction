@@ -42,6 +42,9 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             // Get request body
             var interaction = await httpRequestMessageHelper.GetInteractionFromRequest<Models.Interaction>(req);
 
+            if (interaction == null)
+                return HttpResponseMessageHelper.UnprocessableEntity(req);
+
             // validate the request
             var errors = validate.ValidateResource(interaction);
 

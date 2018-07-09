@@ -87,6 +87,15 @@ namespace NCS.DSS.Interaction.Helpers
 
         #region UnprocessableEntity(422)
 
+        public static HttpResponseMessage UnprocessableEntity(HttpRequestMessage req)
+        {
+            return new HttpResponseMessage((HttpStatusCode)422)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(req),
+                    Encoding.UTF8, "application/json")
+            };
+        }
+
         public static HttpResponseMessage UnprocessableEntity(string message, List<ValidationResult> errors)
         {
             return new HttpResponseMessage((HttpStatusCode)422)

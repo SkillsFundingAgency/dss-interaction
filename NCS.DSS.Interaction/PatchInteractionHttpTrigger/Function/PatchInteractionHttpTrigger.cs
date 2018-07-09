@@ -46,6 +46,9 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             // Get request body
             var interactionPatch = await httpRequestMessageHelper.GetInteractionFromRequest<Models.InteractionPatch>(req);
 
+            if (interactionPatch == null)
+                return HttpResponseMessageHelper.UnprocessableEntity(req);
+
             // validate the request
             var errors = validate.ValidateResource(interactionPatch);
 

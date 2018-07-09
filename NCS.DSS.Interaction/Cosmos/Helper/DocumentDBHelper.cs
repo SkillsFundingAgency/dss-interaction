@@ -9,9 +9,14 @@ namespace NCS.DSS.Interaction.Cosmos.Helper
     {
         private Uri _documentCollectionUri;
         private Uri _documentUri;
+
+        private Uri _customerDocumentCollectionUri;
+        private Uri _customerDocumentUri;
+
         private readonly string _databaseId = ConfigurationManager.AppSettings["DatabaseId"];
         private readonly string _collectionId = ConfigurationManager.AppSettings["CollectionId"];
-
+        private readonly string _customerDatabaseId = ConfigurationManager.AppSettings["CustomerDatabaseId"];
+        private readonly string _customerCollectionId = ConfigurationManager.AppSettings["CustomerCollectionId"];
 
         public Uri CreateDocumentCollectionUri()
         {
@@ -24,8 +29,7 @@ namespace NCS.DSS.Interaction.Cosmos.Helper
 
             return _documentCollectionUri;
         }
-
-
+        
         public Uri CreateDocumentUri(Guid addressId)
         {
             if (_documentUri != null)
@@ -37,6 +41,19 @@ namespace NCS.DSS.Interaction.Cosmos.Helper
 
         }
 
+        #region CustomerDB
 
+        public Uri CreateCustomerDocumentCollectionUri()
+        {
+            if (_customerDocumentCollectionUri != null)
+                return _customerDocumentCollectionUri;
+
+            _customerDocumentCollectionUri = UriFactory.CreateDocumentCollectionUri(
+                _customerDatabaseId, _customerCollectionId);
+
+            return _customerDocumentCollectionUri;
+        }
+
+        #endregion   
     }
 }
