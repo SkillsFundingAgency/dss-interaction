@@ -55,17 +55,17 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
 
             var client = _databaseClient.CreateDocumentClient();
 
-            var addressForCustomerQuery = client
+            var interactionForCustomerQuery = client
                 ?.CreateDocumentQuery<Models.Interaction>(collectionUri, new FeedOptions { MaxItemCount = 1 })
                 .Where(x => x.CustomerId == customerId && x.InteractionId == interactionId)
                 .AsDocumentQuery();
 
-            if (addressForCustomerQuery == null)
+            if (interactionForCustomerQuery == null)
                 return null;
 
-            var addressess = await addressForCustomerQuery.ExecuteNextAsync<Models.Interaction>();
+            var interactions = await interactionForCustomerQuery.ExecuteNextAsync<Models.Interaction>();
 
-            return addressess?.FirstOrDefault();
+            return interactions?.FirstOrDefault();
         }
 
 

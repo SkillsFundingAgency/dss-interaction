@@ -27,9 +27,9 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service
         public async Task<Models.Interaction> GetInteractionForCustomerAsync(Guid customerId, Guid interactionId)
         {
             var documentDbProvider = new DocumentDBProvider();
-            var address = await documentDbProvider.GetInteractionForCustomerAsync(customerId, interactionId);
+            var interaction = await documentDbProvider.GetInteractionForCustomerAsync(customerId, interactionId);
 
-            return address;
+            return interaction;
         }
     }
 }
