@@ -12,10 +12,12 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Microsoft.Azure.Documents.SystemFunctions;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using NCS.DSS.Interaction.Annotations;
+using NCS.DSS.Interaction.Ioc;
 
 namespace NCS.DSS.Interaction.APIDefinition
 {
@@ -269,9 +271,9 @@ namespace NCS.DSS.Interaction.APIDefinition
                 if (parameter.ParameterType == typeof(HttpRequestMessage)) continue;
                 if (parameter.ParameterType == typeof(TraceWriter)) continue;
                 if (parameter.ParameterType == typeof(Microsoft.Extensions.Logging.ILogger)) continue;
+                if (parameter.GetCustomAttributes().Any(attr => attr is InjectAttribute)) continue;
 
                 bool hasUriAttribute = parameter.GetCustomAttributes().Any(attr => attr is FromUriAttribute);
-
 
                 if (route.Contains('{' + parameter.Name))
                 {
