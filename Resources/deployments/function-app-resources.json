@@ -1,42 +1,71 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "functionAppName": {
-            "type": "string"
-        },
-        "appServicePlanId": {
-            "type": "string"
-        },
-        "configEnvironmentName": {
-            "type": "string"
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServicePlanId": {
+      "type": "string"
     },
-    "variables": {},
-    "resources": [
-        {
-            "name": "[parameters('functionAppName')]",
-            "type": "Microsoft.Web/sites",
-            "apiVersion": "2016-08-01",
-            "location": "[resourceGroup().location]",
-            "kind": "functionapp",
-            "properties": {
-                "serverFarmId": "[parameters('appServicePlanId')]",
-                "siteConfig": {
-                    "alwaysOn": true,
-                    "appSettings": [
-                        {
-                            "name": "EnvironmentName",
-                            "value": "[toUpper(parameters('configEnvironmentName'))]"
-                        },
-                        {
-                            "name": "MSDEPLOY_RENAME_LOCKED_FILES",
-                            "value": "1"
-                        }
-                    ]
-                }
+    "configEnvironmentName": {
+      "type": "string"
+    },
+    "cosmosDbCollectionId": {
+      "type": "string"
+    },
+    "cosmosDbDatabaseId": {
+      "type": "string"
+    },
+    "cosmosDbEndpoint": {
+      "type": "string"
+    },
+    "cosmosDbKey": {
+      "type": "string"
+    },
+    "functionAppName": {
+      "type": "string"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('functionAppName')]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "kind": "functionapp",
+      "properties": {
+        "serverFarmId": "[parameters('appServicePlanId')]",
+        "siteConfig": {
+          "alwaysOn": true,
+          "appSettings": [
+            {
+              "name": "EnvironmentName",
+              "value": "[toUpper(parameters('configEnvironmentName'))]"
+            },
+            {
+              "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+              "value": "1"
+            },
+            {
+              "name": "CollectionId",
+              "value": "[parameters('cosmosDbCollectionId')]"
+            },
+            {
+              "name": "DatabaseId",
+              "value": "[parameters('cosmosDbDatabaseId')]"
+            },
+            {
+              "name": "Endpoint",
+              "value": "[parameters('cosmosDbEndpoint')]"
+            },
+            {
+              "name": "Key",
+              "value": "[parameters('cosmosDbKey')]"
             }
+
+          ]
         }
-    ],
-    "outputs": {}
+      }
+    }
+  ],
+  "outputs": {}
 }
