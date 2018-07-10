@@ -5,6 +5,6 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Service
 {
     public interface IPostInteractionHttpTriggerService
     {
-        Task<Guid?> CreateAsync(Models.Interaction interaction);
+        Task<Models.Interaction> CreateAsync(Models.Interaction interaction);
     }
 }

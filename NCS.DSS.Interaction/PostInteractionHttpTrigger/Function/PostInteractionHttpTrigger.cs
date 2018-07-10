@@ -14,6 +14,7 @@ using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.Ioc;
 using NCS.DSS.Interaction.PostInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Validation;
+using Newtonsoft.Json;
 
 namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 {
@@ -38,29 +39,33 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return HttpResponseMessageHelper.BadRequest(customerGuid);
-            
-            // Get request body
-            var interaction = await httpRequestMessageHelper.GetInteractionFromRequest<Models.Interaction>(req);
 
-            if (interaction == null)
-                return HttpResponseMessageHelper.UnprocessableEntity(req);
+            Models.Interaction interactionRequest;
 
-            // validate the request
-            var errors = validate.ValidateResource(interaction);
+            try
+            {
+                interactionRequest = await httpRequestMessageHelper.GetInteractionFromRequest<Models.Interaction>(req);
+            }
+            catch (JsonSerializationException ex)
+            {
+                return HttpResponseMessageHelper.UnprocessableEntity(ex);
+            }
+
+            var errors = validate.ValidateResource(interactionRequest);
 
             if (errors != null && errors.Any())
-                return HttpResponseMessageHelper.UnprocessableEntity("Validation error(s) : ", errors);
+                return HttpResponseMessageHelper.UnprocessableEntity(errors);
            
             var doesCustomerExist = resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
-                return HttpResponseMessageHelper.NoContent("Unable to find a customer with Id of : ", customerGuid);
+                return HttpResponseMessageHelper.NoContent(customerGuid);
 
-            var interactionId = await interactionPostService.CreateAsync(interaction);
+            var interaction = await interactionPostService.CreateAsync(interactionRequest);
 
-            return interactionId == null
+            return interaction == null
                 ? HttpResponseMessageHelper.BadRequest(customerGuid)
-                : HttpResponseMessageHelper.Created("Created Interaction record with Id of : ", customerGuid);
+                : HttpResponseMessageHelper.Created(interaction);
         }
     }
 }

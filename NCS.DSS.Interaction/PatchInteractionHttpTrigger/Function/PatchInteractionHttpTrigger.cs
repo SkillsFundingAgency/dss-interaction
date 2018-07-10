@@ -12,6 +12,7 @@ using NCS.DSS.Interaction.Annotations;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.Ioc;
+using NCS.DSS.Interaction.Models;
 using NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Validation;
 using Newtonsoft.Json;
@@ -43,33 +44,37 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             if (!Guid.TryParse(interactionId, out var interactionGuid))
                 return HttpResponseMessageHelper.BadRequest(interactionGuid);
 
-            // Get request body
-            var interactionPatch = await httpRequestMessageHelper.GetInteractionFromRequest<Models.InteractionPatch>(req);
+            InteractionPatch interactionPatchRequest;
 
-            if (interactionPatch == null)
-                return HttpResponseMessageHelper.UnprocessableEntity(req);
-
-            // validate the request
-            var errors = validate.ValidateResource(interactionPatch);
+            try
+            {
+                interactionPatchRequest = await httpRequestMessageHelper.GetInteractionFromRequest<Models.InteractionPatch>(req);
+            }
+            catch (JsonSerializationException ex)
+            {
+                return HttpResponseMessageHelper.UnprocessableEntity(ex);
+            }
+          
+            var errors = validate.ValidateResource(interactionPatchRequest);
 
             if (errors != null && errors.Any())
-                return HttpResponseMessageHelper.UnprocessableEntity("Validation error(s) : ", errors);
+                return HttpResponseMessageHelper.UnprocessableEntity( errors);
 
             var doesCustomerExist = resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
-                return HttpResponseMessageHelper.NoContent("Unable to find a customer with Id of : ", customerGuid);
+                return HttpResponseMessageHelper.NoContent(customerGuid);
 
             var interaction = await interactionPatchService.GetInteractionForCustomerAsync(customerGuid, interactionGuid);
 
             if (interaction == null)
-                return HttpResponseMessageHelper.NoContent("Unable to find a interaction with Id of : ", interactionGuid);
+                return HttpResponseMessageHelper.NoContent(interactionGuid);
 
-            var updatedInteraction = await interactionPatchService.UpdateAsync(interaction, interactionPatch);
+            var updatedInteraction = await interactionPatchService.UpdateAsync(interaction, interactionPatchRequest);
 
             return updatedInteraction == null ? 
-                HttpResponseMessageHelper.BadRequest("Unable to find update interaction with Id of : ", interactionGuid) : 
-                HttpResponseMessageHelper.Ok("Updated Interaction record with Id of : ", interactionGuid);
+                HttpResponseMessageHelper.BadRequest(interactionGuid) : 
+                HttpResponseMessageHelper.Ok(updatedInteraction);
         }
     }
 }

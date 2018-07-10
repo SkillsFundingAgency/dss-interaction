@@ -41,12 +41,12 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
             var doesCustomerExist = resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
-                return HttpResponseMessageHelper.NoContent("Unable to find a customer with Id of : ", customerGuid);
+                return HttpResponseMessageHelper.NoContent(customerGuid);
 
             var interaction = await interactionGetService.GetInteractionForCustomerAsync(customerGuid, interactionGuid);
 
             return interaction == null ? 
-                HttpResponseMessageHelper.NoContent("Unable to find a interaction with Id of : ", interactionGuid) :
+                HttpResponseMessageHelper.NoContent(interactionGuid) :
                 HttpResponseMessageHelper.Ok(interaction);
         }
     }

@@ -7,7 +7,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Service
 {
     public class PostInteractionHttpTriggerService : IPostInteractionHttpTriggerService
     {
-        public async Task<Guid?> CreateAsync(Models.Interaction interaction)
+        public async Task<Models.Interaction> CreateAsync(Models.Interaction interaction)
         {
             if (interaction == null)
                 return null;
@@ -19,7 +19,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Service
 
             var response = await documentDbProvider.CreateInteractionAsync(interaction);
 
-            return response.StatusCode == HttpStatusCode.Created ? interactionId : (Guid?)null;
+            return response.StatusCode == HttpStatusCode.Created ? (dynamic) response.Resource : null;
         }
     }
 }

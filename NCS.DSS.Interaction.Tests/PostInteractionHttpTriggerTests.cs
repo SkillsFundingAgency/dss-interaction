@@ -105,7 +105,7 @@ namespace NCS.DSS.Interaction.Tests
 
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(true);
 
-            _postInteractionHttpTriggerService.CreateAsync(Arg.Any<Models.Interaction>()).Returns(Task.FromResult<Guid?>(null).Result);
+            _postInteractionHttpTriggerService.CreateAsync(Arg.Any<Models.Interaction>()).Returns(Task.FromResult<Models.Interaction>(null).Result);
 
             var result = await RunFunction(ValidCustomerId);
 
@@ -121,7 +121,7 @@ namespace NCS.DSS.Interaction.Tests
 
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(true);
 
-            _postInteractionHttpTriggerService.CreateAsync(Arg.Any<Models.Interaction>()).Returns(Task.FromResult<Guid?>(Guid.NewGuid()).Result);
+            _postInteractionHttpTriggerService.CreateAsync(Arg.Any<Models.Interaction>()).Returns(Task.FromResult<Models.Interaction>(_interaction).Result);
 
             var result = await RunFunction(ValidCustomerId);
 
