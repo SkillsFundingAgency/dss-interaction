@@ -68,7 +68,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             var updatedInteraction = await interactionPatchService.UpdateAsync(interaction, interactionPatch);
 
             return updatedInteraction == null ? 
-                HttpResponseMessageHelper.BadRequest("Unable to find update address with Id of : ", interactionGuid) : 
+                HttpResponseMessageHelper.BadRequest("Unable to find update interaction with Id of : ", interactionGuid) : 
                 HttpResponseMessageHelper.Ok("Updated Interaction record with Id of : ", interactionGuid);
         }
     }

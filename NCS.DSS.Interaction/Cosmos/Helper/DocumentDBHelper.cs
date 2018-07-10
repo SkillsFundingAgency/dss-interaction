@@ -30,12 +30,12 @@ namespace NCS.DSS.Interaction.Cosmos.Helper
             return _documentCollectionUri;
         }
         
-        public Uri CreateDocumentUri(Guid addressId)
+        public Uri CreateDocumentUri(Guid interactionId)
         {
             if (_documentUri != null)
                 return _documentUri;
 
-            _documentUri = UriFactory.CreateDocumentUri(_databaseId, _collectionId, addressId.ToString());
+            _documentUri = UriFactory.CreateDocumentUri(_databaseId, _collectionId, interactionId.ToString());
 
             return _documentUri;
 
