@@ -25,7 +25,7 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
         {
             var collectionUri = _documentDbHelper.CreateCustomerDocumentCollectionUri();
 
-            var client = _databaseClient.CreateCustomerDocumentClient();
+            var client = _databaseClient.CreateDocumentClient();
 
             if (client == null)
                 return false;

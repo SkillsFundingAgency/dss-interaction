@@ -10,13 +10,12 @@ namespace NCS.DSS.Interaction.Cosmos.Helper
         private Uri _documentCollectionUri;
         private Uri _documentUri;
 
-        private Uri _customerDocumentCollectionUri;
-        private Uri _customerDocumentUri;
-
         private readonly string _databaseId = ConfigurationManager.AppSettings["DatabaseId"];
         private readonly string _collectionId = ConfigurationManager.AppSettings["CollectionId"];
+
         private readonly string _customerDatabaseId = ConfigurationManager.AppSettings["CustomerDatabaseId"];
         private readonly string _customerCollectionId = ConfigurationManager.AppSettings["CustomerCollectionId"];
+        private Uri _customerDocumentCollectionUri;
 
         public Uri CreateDocumentCollectionUri()
         {
