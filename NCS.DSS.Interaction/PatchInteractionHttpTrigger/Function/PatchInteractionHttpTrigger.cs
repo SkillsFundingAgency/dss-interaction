@@ -54,7 +54,10 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             {
                 return HttpResponseMessageHelper.UnprocessableEntity(ex);
             }
-          
+
+            if (interactionPatchRequest == null)
+                return HttpResponseMessageHelper.UnprocessableEntity(req);
+
             var errors = validate.ValidateResource(interactionPatchRequest);
 
             if (errors != null && errors.Any())
