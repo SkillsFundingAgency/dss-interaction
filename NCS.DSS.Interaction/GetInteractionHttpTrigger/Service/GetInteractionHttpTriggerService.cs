@@ -13,8 +13,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Service
             var documentDbProvider = new DocumentDBProvider();
             var interactions = await documentDbProvider.GetInteractionsForCustomerAsync(customerId);
 
-            return interactions.Any() ? interactions : null;
-
+            return  interactions;
         }
     }
 }
