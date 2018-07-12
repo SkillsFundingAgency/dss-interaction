@@ -15,12 +15,12 @@ namespace NCS.DSS.Interaction.Models
         [Required]
         [Display(Description = "Unique identifier of a customer.")]
         [Example(Description = "2730af9c-fc34-4c2b-a905-c4b584b0f379")]
-        public Guid CustomerId { get; set; }
+        public Guid? CustomerId { get; set; }
 
         [Required]
         [Display(Description = "Unique identifier for the touchpoint with which the interaction took place.")]
         [Example(Description = "f823d23a-4006-4572-aef5-65ff085b4687")]
-        public Guid TouchpointId { get; set; }
+        public Guid? TouchpointId { get; set; }
 
         [Display(Description = "Unique identifier of the adviser involved in the interaction.")]
         [Example(Description = "6eed4005-4364-4bcb-affb-170ee402d1aa")]
