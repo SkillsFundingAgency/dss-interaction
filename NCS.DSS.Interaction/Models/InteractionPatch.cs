@@ -22,11 +22,11 @@ namespace NCS.DSS.Interaction.Models
 
         [Display(Description = "Channel reference data")]
         [Example(Description = "1")]
-        public Channel Channel { get; set; }
+        public Channel? Channel { get; set; }
 
         [Display(Description = "Business event reference data")]
         [Example(Description = "2")]
-        public BusinessEvent BusinessEvent { get; set; }
+        public BusinessEvent? BusinessEvent { get; set; }
 
         [DataType(DataType.DateTime)]
         [Display(Description = "Date and time of the last modification to the record.")]

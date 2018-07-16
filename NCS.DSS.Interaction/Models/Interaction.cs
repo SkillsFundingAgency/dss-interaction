@@ -53,13 +53,26 @@ namespace NCS.DSS.Interaction.Models
             if (interactionPatch == null)
                 return;
 
-            TouchpointId = interactionPatch.TouchpointId;
-            AdviserDetailsId = interactionPatch.AdviserDetailsId;
-            DateandTimeOfInteraction = interactionPatch.DateandTimeOfInteraction;
-            Channel = interactionPatch.Channel;
-            BusinessEvent = interactionPatch.BusinessEvent;
-            LastModifiedDate = interactionPatch.LastModifiedDate;
-            LastModifiedTouchpointId = interactionPatch.LastModifiedTouchpointId;
+            if(interactionPatch.TouchpointId.HasValue)
+                TouchpointId = interactionPatch.TouchpointId;
+
+            if (interactionPatch.AdviserDetailsId.HasValue)
+                AdviserDetailsId = interactionPatch.AdviserDetailsId;
+
+            if (interactionPatch.DateandTimeOfInteraction.HasValue)
+                DateandTimeOfInteraction = interactionPatch.DateandTimeOfInteraction;
+
+            if(interactionPatch.Channel.HasValue)
+                Channel = interactionPatch.Channel.Value;
+
+            if (interactionPatch.BusinessEvent.HasValue)
+                BusinessEvent = interactionPatch.BusinessEvent.Value;
+
+            if (interactionPatch.LastModifiedDate.HasValue)
+                LastModifiedDate = interactionPatch.LastModifiedDate;
+
+            if (interactionPatch.LastModifiedTouchpointId.HasValue)
+                LastModifiedTouchpointId = interactionPatch.LastModifiedTouchpointId;
         }
     }
 }
