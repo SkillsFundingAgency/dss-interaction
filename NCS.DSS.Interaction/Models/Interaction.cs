@@ -53,9 +53,6 @@ namespace NCS.DSS.Interaction.Models
             if (interactionPatch == null)
                 return;
 
-            if(interactionPatch.TouchpointId.HasValue)
-                TouchpointId = interactionPatch.TouchpointId;
-
             if (interactionPatch.AdviserDetailsId.HasValue)
                 AdviserDetailsId = interactionPatch.AdviserDetailsId;
 
