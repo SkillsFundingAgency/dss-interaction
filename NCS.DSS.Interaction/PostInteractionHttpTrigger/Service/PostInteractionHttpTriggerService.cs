@@ -15,6 +15,9 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Service
             var interactionId = Guid.NewGuid();
             interaction.InteractionId = interactionId;
 
+            if(!interaction.LastModifiedDate.HasValue)
+                interaction.LastModifiedDate = DateTime.Now;
+
             var documentDbProvider = new DocumentDBProvider();
 
             var response = await documentDbProvider.CreateInteractionAsync(interaction);

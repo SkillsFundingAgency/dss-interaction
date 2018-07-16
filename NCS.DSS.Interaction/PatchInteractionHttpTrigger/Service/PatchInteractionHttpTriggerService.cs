@@ -13,6 +13,9 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service
             if (interaction == null)
                 return null;
 
+            if (!interactionPatch.LastModifiedDate.HasValue)
+                interactionPatch.LastModifiedDate = DateTime.Now;
+
             interaction.Patch(interactionPatch);
 
             var documentDbProvider = new DocumentDBProvider();
