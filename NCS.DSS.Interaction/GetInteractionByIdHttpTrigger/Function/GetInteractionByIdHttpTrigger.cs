@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http.Description;
+using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Annotations;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Service;
@@ -26,11 +27,11 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Get", Description = "Ability to retrieve an individual interaction record.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, TraceWriter log, string customerId, string interactionId,
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, ILogger log, string customerId, string interactionId,
             [Inject]IResourceHelper resourceHelper,
             [Inject]IGetInteractionByIdHttpTriggerService interactionGetService)
         {
-            log.Info("Get Interaction By Id C# HTTP trigger function  processed a request.");
+            log.LogInformation("Get Interaction By Id C# HTTP trigger function  processed a request.");
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return HttpResponseMessageHelper.BadRequest(customerGuid);

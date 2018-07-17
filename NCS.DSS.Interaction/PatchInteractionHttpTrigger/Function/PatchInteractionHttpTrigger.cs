@@ -8,6 +8,7 @@ using System.Web.Http.Description;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Annotations;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.Helpers;
@@ -30,13 +31,13 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update an interaction record.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, TraceWriter log, string customerId, string interactionId,
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, ILogger log, string customerId, string interactionId,
             [Inject]IResourceHelper resourceHelper,
             [Inject]IHttpRequestMessageHelper httpRequestMessageHelper,
             [Inject]IValidate validate,
             [Inject]IPatchInteractionHttpTriggerService interactionPatchService)
         {
-            log.Info("Patch Interaction C# HTTP trigger function processed a request.");
+            log.LogInformation("Patch Interaction C# HTTP trigger function processed a request.");
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return HttpResponseMessageHelper.BadRequest(customerGuid);

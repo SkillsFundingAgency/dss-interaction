@@ -8,6 +8,7 @@ using System.Web.Http.Description;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Annotations;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.Helpers;
@@ -29,13 +30,13 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new interaction resource.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, TraceWriter log, string customerId,
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, ILogger log, string customerId,
             [Inject]IResourceHelper resourceHelper,
             [Inject]IHttpRequestMessageHelper httpRequestMessageHelper,
             [Inject]IValidate validate,
             [Inject]IPostInteractionHttpTriggerService interactionPostService)
         {
-            log.Info("Post Interaction C# HTTP trigger function processed a request.");
+            log.LogInformation("Post Interaction C# HTTP trigger function processed a request.");
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return HttpResponseMessageHelper.BadRequest(customerGuid);

@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27703.2018
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCS.DSS.Interaction", "NCS.DSS.Interaction\NCS.DSS.Interaction.csproj", "{268942FE-7C99-47CF-8058-26A378DCB2F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCS.DSS.Interaction.Tests", "NCS.DSS.Interaction.Tests\NCS.DSS.Interaction.Tests.csproj", "{081F2E05-7590-42EC-97FA-2FCBA002A642}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCS.DSS.Interaction.Tests", "NCS.DSS.Interaction.Tests\NCS.DSS.Interaction.Tests.csproj", "{AC335478-3BE7-4563-8E5C-CB135AFC1D5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{268942FE-7C99-47CF-8058-26A378DCB2F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{268942FE-7C99-47CF-8058-26A378DCB2F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{268942FE-7C99-47CF-8058-26A378DCB2F2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{081F2E05-7590-42EC-97FA-2FCBA002A642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{081F2E05-7590-42EC-97FA-2FCBA002A642}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{081F2E05-7590-42EC-97FA-2FCBA002A642}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{081F2E05-7590-42EC-97FA-2FCBA002A642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC335478-3BE7-4563-8E5C-CB135AFC1D5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC335478-3BE7-4563-8E5C-CB135AFC1D5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC335478-3BE7-4563-8E5C-CB135AFC1D5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC335478-3BE7-4563-8E5C-CB135AFC1D5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
