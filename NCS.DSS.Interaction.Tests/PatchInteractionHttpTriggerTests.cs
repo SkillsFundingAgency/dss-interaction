@@ -137,6 +137,24 @@ namespace NCS.DSS.Interaction.Tests
         }
 
         [Test]
+        public async Task PatchInteractionHttpTrigger_ReturnsStatusCodeOK_WhenRequestIsNotValid()
+        {
+            _httpRequestMessageHelper.GetInteractionFromRequest<Models.InteractionPatch>(_request).Returns(Task.FromResult(_interactionPatch).Result);
+
+            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(true);
+
+            _patchInteractionHttpTriggerService.GetInteractionForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult<Models.Interaction>(_interaction).Result);
+
+            _patchInteractionHttpTriggerService.UpdateAsync(Arg.Any<Models.Interaction>(), Arg.Any<Models.InteractionPatch>()).Returns(Task.FromResult<Models.Interaction>(null).Result);
+
+            var result = await RunFunction(ValidCustomerId, ValidInteractionId);
+
+            // Assert
+            Assert.IsInstanceOf<HttpResponseMessage>(result);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+        
+        [Test]
         public async Task PatchInteractionHttpTrigger_ReturnsStatusCodeOK_WhenRequestIsValid()
         {
             _httpRequestMessageHelper.GetInteractionFromRequest<Models.InteractionPatch>(_request).Returns(Task.FromResult(_interactionPatch).Result);
@@ -153,6 +171,7 @@ namespace NCS.DSS.Interaction.Tests
             Assert.IsInstanceOf<HttpResponseMessage>(result);
             Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         }
+
 
         private async Task<HttpResponseMessage> RunFunction(string customerId, string interactionId)
         {

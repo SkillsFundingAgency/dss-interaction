@@ -115,6 +115,22 @@ namespace NCS.DSS.Interaction.Tests
         }
 
         [Test]
+        public async Task PostInteractionHttpTrigger_ReturnsStatusCodeCreated_WhenRequestIsNotValid()
+        {
+            _httpRequestMessageHelper.GetInteractionFromRequest<Models.Interaction>(_request).Returns(Task.FromResult(_interaction).Result);
+
+            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(true);
+
+            _postInteractionHttpTriggerService.CreateAsync(Arg.Any<Models.Interaction>()).Returns(Task.FromResult<Models.Interaction>(null).Result);
+
+            var result = await RunFunction(ValidCustomerId);
+
+            // Assert
+            Assert.IsInstanceOf<HttpResponseMessage>(result);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Test]
         public async Task PostInteractionHttpTrigger_ReturnsStatusCodeCreated_WhenRequestIsValid()
         {
             _httpRequestMessageHelper.GetInteractionFromRequest<Models.Interaction>(_request).Returns(Task.FromResult(_interaction).Result);

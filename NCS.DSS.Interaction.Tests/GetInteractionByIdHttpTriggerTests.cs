@@ -41,7 +41,7 @@ namespace NCS.DSS.Interaction.Tests
         }
 
         [Test]
-        public async Task GetInteractionHttpTrigger_ReturnsStatusCodeBadRequest_WhenCustomerIdIsInvalid()
+        public async Task GetInteractionByIdHttpTrigger_ReturnsStatusCodeBadRequest_WhenCustomerIdIsInvalid()
         {
             // Act
             var result = await RunFunction(InValidId, ValidInteractionId);
@@ -52,7 +52,7 @@ namespace NCS.DSS.Interaction.Tests
         }
 
         [Test]
-        public async Task GetInteractionHttpTrigger_ReturnsStatusCodeBadRequest_WhenInteractionIdIsInvalid()
+        public async Task GetInteractionByIdHttpTrigger_ReturnsStatusCodeBadRequest_WhenInteractionIdIsInvalid()
         {
             // Act
             var result = await RunFunction(ValidCustomerId, InValidId);
@@ -63,7 +63,7 @@ namespace NCS.DSS.Interaction.Tests
         }
 
         [Test]
-        public async Task GetInteractionHttpTrigger_ReturnsStatusCodeNoContent_WhenCustomerDoesNotExist()
+        public async Task GetInteractionByIdHttpTrigger_ReturnsStatusCodeNoContent_WhenCustomerDoesNotExist()
         {
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(false);
 
@@ -76,7 +76,7 @@ namespace NCS.DSS.Interaction.Tests
         }
 
         [Test]
-        public async Task GetInteractionHttpTrigger_ReturnsStatusCodeNoContent_WhenInteractionDoesNotExist()
+        public async Task GetInteractionByIdHttpTrigger_ReturnsStatusCodeNoContent_WhenInteractionDoesNotExist()
         {
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
 
@@ -91,7 +91,7 @@ namespace NCS.DSS.Interaction.Tests
         }
 
         [Test]
-        public async Task GetInteractionHttpTrigger_ReturnsStatusCodeOk_WhenInteractionExists()
+        public async Task GetInteractionByIdHttpTrigger_ReturnsStatusCodeOk_WhenInteractionExists()
         {
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
 
