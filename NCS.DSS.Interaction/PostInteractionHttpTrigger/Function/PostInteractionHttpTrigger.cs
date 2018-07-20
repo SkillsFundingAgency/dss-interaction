@@ -47,7 +47,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             {
                 interactionRequest = await httpRequestMessageHelper.GetInteractionFromRequest<Models.Interaction>(req);
             }
-            catch (JsonSerializationException ex)
+            catch (JsonException ex)
             {
                 return HttpResponseMessageHelper.UnprocessableEntity(ex);
             }

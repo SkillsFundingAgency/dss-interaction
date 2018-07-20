@@ -9,7 +9,9 @@ using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Validation;
+using Newtonsoft.Json;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 
 namespace NCS.DSS.Interaction.Tests
@@ -77,8 +79,7 @@ namespace NCS.DSS.Interaction.Tests
         [Test]
         public async Task PatchInteractionHttpTrigger_ReturnsStatusCodeUnprocessableEntity_WhenInteractionRequestIsInvalid()
         {
-            var validationResults = new List<ValidationResult> { new ValidationResult("Customer Id is Required") };
-            _validate.ValidateResource(Arg.Any<Models.InteractionPatch>()).Returns(validationResults);
+            _httpRequestMessageHelper.GetInteractionFromRequest<Models.InteractionPatch>(_request).Throws(new JsonException());
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId);
 
