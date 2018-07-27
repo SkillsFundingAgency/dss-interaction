@@ -12,11 +12,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Service
             if (interaction == null)
                 return null;
 
-            var interactionId = Guid.NewGuid();
-            interaction.InteractionId = interactionId;
-
-            if(!interaction.LastModifiedDate.HasValue)
-                interaction.LastModifiedDate = DateTime.Now;
+            interaction.SetDefaultValues();
 
             var documentDbProvider = new DocumentDBProvider();
 

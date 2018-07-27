@@ -2,7 +2,7 @@
 
 namespace NCS.DSS.Interaction.ReferenceData
 {
-    public enum BusinessEvent
+    public enum InteractionType
     {
         [Description("Register a new customer")]
         RegisterANewCustomer = 1,

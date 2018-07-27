@@ -5,7 +5,7 @@ using NCS.DSS.Interaction.ReferenceData;
 
 namespace NCS.DSS.Interaction.Models
 {
-    public class Interaction
+    public class Interaction : IInteraction
     {
         [Display(Description = "Unique identifier for the interaction record.")]
         [Example(Description = "b8592ff8-af97-49ad-9fb2-e5c3c717fd85")]
@@ -31,13 +31,15 @@ namespace NCS.DSS.Interaction.Models
         [Example(Description = "2018-06-21T11:21:00")]
         public DateTime? DateandTimeOfInteraction { get; set; }
 
+        [Required]
         [Display(Description = "Channel reference data")]
         [Example(Description = "1")]
-        public Channel Channel { get; set; }
+        public Channel? Channel { get; set; }
 
+        [Required]
         [Display(Description = "Business event reference data")]
         [Example(Description = "2")]
-        public BusinessEvent BusinessEvent { get; set; }
+        public InteractionType? InteractionType { get; set; }
         
         [DataType(DataType.DateTime)]
         [Display(Description = "Date and time of the last modification to the record.")]
@@ -47,6 +49,14 @@ namespace NCS.DSS.Interaction.Models
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
         [Example(Description = "d1307d77-af23-4cb4-b600-a60e04f8c3df")]
         public Guid? LastModifiedTouchpointId { get; set; }
+
+        public void SetDefaultValues()
+        {
+            InteractionId = Guid.NewGuid();
+
+            if (!LastModifiedDate.HasValue)
+                LastModifiedDate = DateTime.Now;
+        }
 
         public void Patch(InteractionPatch interactionPatch)
         {
@@ -62,8 +72,8 @@ namespace NCS.DSS.Interaction.Models
             if(interactionPatch.Channel.HasValue)
                 Channel = interactionPatch.Channel.Value;
 
-            if (interactionPatch.BusinessEvent.HasValue)
-                BusinessEvent = interactionPatch.BusinessEvent.Value;
+            if (interactionPatch.InteractionType.HasValue)
+                InteractionType = interactionPatch.InteractionType.Value;
 
             if (interactionPatch.LastModifiedDate.HasValue)
                 LastModifiedDate = interactionPatch.LastModifiedDate;
