@@ -71,6 +71,11 @@ namespace NCS.DSS.Interaction.Helpers
 
         #region BadRequest(400)
 
+        public static HttpResponseMessage BadRequest()
+        {
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
+        }
+
         public static HttpResponseMessage BadRequest(Guid id)
         {
             return new HttpResponseMessage(HttpStatusCode.BadRequest)

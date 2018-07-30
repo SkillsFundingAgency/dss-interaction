@@ -37,7 +37,14 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             [Inject]IValidate validate,
             [Inject]IPatchInteractionHttpTriggerService interactionPatchService)
         {
-            log.LogInformation("Patch Interaction C# HTTP trigger function processed a request.");
+            var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
+            if (touchpointId == null)
+            {
+                log.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
+                return HttpResponseMessageHelper.BadRequest();
+            }
+
+            log.LogInformation("Patch Interaction C# HTTP trigger function processed a request. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return HttpResponseMessageHelper.BadRequest(customerGuid);
@@ -58,6 +65,8 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 
             if (interactionPatchRequest == null)
                 return HttpResponseMessageHelper.UnprocessableEntity(req);
+
+            interactionPatchRequest.LastModifiedTouchpointId = touchpointId;
 
             var errors = validate.ValidateResource(interactionPatchRequest);
 

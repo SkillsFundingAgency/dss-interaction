@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Service;
+using NCS.DSS.Interaction.Helpers;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -20,6 +21,7 @@ namespace NCS.DSS.Interaction.Tests
         private ILogger _log;
         private HttpRequestMessage _request;
         private IResourceHelper _resourceHelper;
+        private IHttpRequestMessageHelper _httpRequestMessageHelper;
         private IGetInteractionByIdHttpTriggerService _getInteractionByIdHttpTriggerService;
         private Models.Interaction _interaction;
 
@@ -37,7 +39,22 @@ namespace NCS.DSS.Interaction.Tests
 
             _log = Substitute.For<ILogger>();
             _resourceHelper = Substitute.For<IResourceHelper>();
+            _httpRequestMessageHelper = Substitute.For<IHttpRequestMessageHelper>();
             _getInteractionByIdHttpTriggerService = Substitute.For<IGetInteractionByIdHttpTriggerService>();
+            _httpRequestMessageHelper.GetTouchpointId(_request).Returns(new Guid());
+        }
+
+        [Test]
+        public async Task GetInteractionByIdHttpTrigger_ReturnsStatusCodeBadRequest_WhenTouchpointIdIsNotProvided()
+        {
+            _httpRequestMessageHelper.GetTouchpointId(_request).Returns((Guid?)null);
+
+            // Act
+            var result = await RunFunction(ValidCustomerId, ValidInteractionId);
+
+            // Assert
+            Assert.IsInstanceOf<HttpResponseMessage>(result);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         [Test]
@@ -108,7 +125,7 @@ namespace NCS.DSS.Interaction.Tests
         private async Task<HttpResponseMessage> RunFunction(string customerId, string interactionId)
         {
             return await GetInteractionByIdHttpTrigger.Function.GetInteractionByIdHttpTrigger.Run(
-                _request, _log, customerId, interactionId, _resourceHelper, _getInteractionByIdHttpTriggerService).ConfigureAwait(false);
+                _request, _log, customerId, interactionId, _resourceHelper, _httpRequestMessageHelper, _getInteractionByIdHttpTriggerService).ConfigureAwait(false);
         }
 
     }

@@ -36,7 +36,14 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             [Inject]IValidate validate,
             [Inject]IPostInteractionHttpTriggerService interactionPostService)
         {
-            log.LogInformation("Post Interaction C# HTTP trigger function processed a request.");
+            var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
+            if (touchpointId == null)
+            {
+                log.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
+                return HttpResponseMessageHelper.BadRequest();
+            }
+
+            log.LogInformation("Post Interaction C# HTTP trigger function processed a request. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return HttpResponseMessageHelper.BadRequest(customerGuid);
@@ -54,6 +61,8 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 
             if (interactionRequest == null)
                 return HttpResponseMessageHelper.UnprocessableEntity(req);
+
+            interactionRequest.LastModifiedTouchpointId = touchpointId;
 
             var errors = validate.ValidateResource(interactionRequest);
 

@@ -55,7 +55,7 @@ namespace NCS.DSS.Interaction.Models
             InteractionId = Guid.NewGuid();
 
             if (!LastModifiedDate.HasValue)
-                LastModifiedDate = DateTime.Now;
+                LastModifiedDate = DateTime.UtcNow;
         }
 
         public void Patch(InteractionPatch interactionPatch)
