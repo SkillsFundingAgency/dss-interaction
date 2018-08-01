@@ -1,23 +1,35 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "templateBaseUrl": {
-            "type": "string"
-        },
-        "environmentName": {
-            "type": "string"
-        },
-        "functionAppNames": {
-            "type": "array"
-        },
-        "sharedAppServicePlanName": {
-            "type": "string"
-        },
-        "sharedAppServicePlanResourceGroup": {
-            "type": "string"
-        }
+  "parameters": {
+    "cosmosDbCollectionId": {
+      "type": "string"
     },
+    "cosmosDbDatabaseId": {
+      "type": "string"
+    },
+    "cosmosDbEndpoint": {
+      "type": "string"
+    },
+    "cosmosDbKey": {
+      "type": "string"
+    },
+    "environmentName": {
+      "type": "string"
+    },
+    "functionAppNames": {
+      "type": "array"
+    },
+    "sharedAppServicePlanName": {
+      "type": "string"
+    },
+    "sharedAppServicePlanResourceGroup": {
+      "type": "string"
+    },
+    "templateBaseUrl": {
+      "type": "string"
+    }
+  },
     "variables": {
         "functionAppTemplateUri": "[concat(parameters('templateBaseUrl'), '/deployments/function-app-resources.json')]",
         "sharedAppServicePlanId": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedAppServicePlanName'))]"
@@ -33,17 +45,29 @@
                     "uri": "[variables('functionAppTemplateUri')]",
                     "contentVersion": "1.0.0.0"
                 },
-                "parameters": {
-                    "functionAppName": {
-                        "value": "[parameters('functionAppNames')[copyIndex()]]"
-                    },
-                    "appServicePlanId": {
-                        "value": "[variables('sharedAppServicePlanId')]"
-                    },
-                    "configEnvironmentName": {
-                        "value": "[parameters('environmentName')]"
-                    }
+              "parameters": {
+                "functionAppName": {
+                  "value": "[parameters('functionAppNames')[copyIndex()]]"
+                },
+                "appServicePlanId": {
+                  "value": "[variables('sharedAppServicePlanId')]"
+                },
+                "configEnvironmentName": {
+                  "value": "[parameters('environmentName')]"
+                },
+                "cosmosDbCollectionId": {
+                  "value": "[parameters('cosmosDbCollectionId')]"
+                },
+                "cosmosDbDatabaseId": {
+                  "value": "[parameters('cosmosDbDatabaseId')]"
+                },
+                "cosmosDbEndpoint": {
+                  "value": "[parameters('cosmosDbEndpoint')]"
+                },
+                "cosmosDbKey": {
+                  "value": "[parameters('cosmosDbKey')]"
                 }
+              }
             },
             "copy": {
                 "name": "FunctionAppCopy",
