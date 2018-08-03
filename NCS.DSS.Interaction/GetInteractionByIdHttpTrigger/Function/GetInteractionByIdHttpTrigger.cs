@@ -56,7 +56,7 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
 
             return interaction == null ? 
                 HttpResponseMessageHelper.NoContent(interactionGuid) :
-                HttpResponseMessageHelper.Ok(interaction);
+                HttpResponseMessageHelper.Ok(JsonHelper.SerializeObject(interaction));
         }
     }
 }

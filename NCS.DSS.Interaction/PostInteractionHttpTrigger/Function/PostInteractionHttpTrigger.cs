@@ -78,7 +78,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 
             return interaction == null
                 ? HttpResponseMessageHelper.BadRequest(customerGuid)
-                : HttpResponseMessageHelper.Created(interaction);
+                : HttpResponseMessageHelper.Created(JsonHelper.SerializeObject(interaction));
         }
     }
 }

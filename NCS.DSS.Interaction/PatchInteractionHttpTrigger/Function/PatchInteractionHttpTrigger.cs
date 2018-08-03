@@ -87,7 +87,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 
             return updatedInteraction == null ? 
                 HttpResponseMessageHelper.BadRequest(interactionGuid) : 
-                HttpResponseMessageHelper.Ok(updatedInteraction);
+                HttpResponseMessageHelper.Ok(JsonHelper.SerializeObject(updatedInteraction));
         }
     }
 }
