@@ -18,20 +18,17 @@ namespace NCS.DSS.Interaction.Helpers
             return await req.Content.ReadAsAsync<T>();
         }
 
-        public Guid? GetTouchpointId(HttpRequestMessage req)
+        public string GetTouchpointId(HttpRequestMessage req)
         {
             if (req?.Headers == null)
                 return null;
 
-            if (!req.Headers.Contains("APIM-TouchpointId"))
+            if (!req.Headers.Contains("TouchpointId"))
                 return null;
 
-            var touchpointId = req.Headers.GetValues("APIM-TouchpointId").FirstOrDefault();
+            var touchpointId = req.Headers.GetValues("TouchpointId").FirstOrDefault();
 
-            if (!Guid.TryParse(touchpointId, out var touchpountGuid))
-                return null;
-
-            return touchpountGuid;
+            return string.IsNullOrEmpty(touchpointId) ? string.Empty : touchpointId;
         }
 
     }

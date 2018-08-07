@@ -10,7 +10,7 @@ namespace NCS.DSS.Interaction.Models
         Channel? Channel { get; set; }
         InteractionType? InteractionType { get; set; }
         DateTime? LastModifiedDate { get; set; }
-        Guid? LastModifiedTouchpointId { get; set; }
+        string LastModifiedTouchpointId { get; set; }
 
         void SetDefaultValues();
         

@@ -46,9 +46,10 @@ namespace NCS.DSS.Interaction.Models
         [Example(Description = "2018-06-22T16:52:10")]
         public DateTime? LastModifiedDate { get; set; }
         
+        [StringLength(10, MinimumLength = 10)]
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
-        [Example(Description = "d1307d77-af23-4cb4-b600-a60e04f8c3df")]
-        public Guid? LastModifiedTouchpointId { get; set; }
+        [Example(Description = "0000000001")]
+        public string LastModifiedTouchpointId { get; set; }
 
         public void SetDefaultValues()
         {
@@ -78,7 +79,7 @@ namespace NCS.DSS.Interaction.Models
             if (interactionPatch.LastModifiedDate.HasValue)
                 LastModifiedDate = interactionPatch.LastModifiedDate;
 
-            if (interactionPatch.LastModifiedTouchpointId.HasValue)
+            if (!string.IsNullOrEmpty(interactionPatch.LastModifiedTouchpointId))
                 LastModifiedTouchpointId = interactionPatch.LastModifiedTouchpointId;
         }
     }
