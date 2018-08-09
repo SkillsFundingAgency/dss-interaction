@@ -18,8 +18,9 @@ namespace NCS.DSS.Interaction.Models
         public Guid? CustomerId { get; set; }
 
         [Required]
+        [StringLength(10, MinimumLength = 10)]
         [Display(Description = "Unique identifier for the touchpoint with which the interaction took place.")]
-        [Example(Description = "f823d23a-4006-4572-aef5-65ff085b4687")]
+        [Example(Description = "0000000001")]
         public Guid? TouchpointId { get; set; }
 
         [Display(Description = "Unique identifier of the adviser involved in the interaction.")]
