@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace NCS.DSS.Interaction.Helpers
@@ -12,8 +13,8 @@ namespace NCS.DSS.Interaction.Helpers
             if (req == null)
                 return default(T);
 
-            if (req.Content?.Headers?.ContentType != null)
-                req.Content.Headers.ContentType.MediaType = "application/json";
+            if (req.Content?.Headers != null)
+                req.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             return await req.Content.ReadAsAsync<T>();
         }
