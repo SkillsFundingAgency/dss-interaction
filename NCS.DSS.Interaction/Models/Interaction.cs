@@ -12,16 +12,14 @@ namespace NCS.DSS.Interaction.Models
         [Newtonsoft.Json.JsonProperty(PropertyName = "id")]
         public Guid? InteractionId { get; set; }
 
-        [Required]
         [Display(Description = "Unique identifier of a customer.")]
         [Example(Description = "2730af9c-fc34-4c2b-a905-c4b584b0f379")]
         public Guid? CustomerId { get; set; }
 
-        [Required]
         [StringLength(10, MinimumLength = 10)]
         [Display(Description = "Unique identifier for the touchpoint with which the interaction took place.")]
         [Example(Description = "0000000001")]
-        public Guid? TouchpointId { get; set; }
+        public string TouchpointId { get; set; }
 
         [Display(Description = "Unique identifier of the adviser involved in the interaction.")]
         [Example(Description = "6eed4005-4364-4bcb-affb-170ee402d1aa")]
@@ -54,10 +52,17 @@ namespace NCS.DSS.Interaction.Models
 
         public void SetDefaultValues()
         {
-            InteractionId = Guid.NewGuid();
 
             if (!LastModifiedDate.HasValue)
                 LastModifiedDate = DateTime.UtcNow;
+        }
+
+        public void SetIds(Guid customerId, string touchpointId)
+        {
+            InteractionId = Guid.NewGuid();
+            CustomerId = customerId;
+            TouchpointId = touchpointId;
+            LastModifiedTouchpointId = touchpointId;
         }
 
         public void Patch(InteractionPatch interactionPatch)

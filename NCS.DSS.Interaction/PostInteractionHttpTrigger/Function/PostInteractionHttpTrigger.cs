@@ -62,7 +62,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             if (interactionRequest == null)
                 return HttpResponseMessageHelper.UnprocessableEntity(req);
 
-            interactionRequest.LastModifiedTouchpointId = touchpointId;
+            interactionRequest.SetIds(customerGuid, touchpointId);
 
             var errors = validate.ValidateResource(interactionRequest);
 
