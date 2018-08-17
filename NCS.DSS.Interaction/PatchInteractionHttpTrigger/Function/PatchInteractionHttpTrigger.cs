@@ -85,6 +85,9 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 
             var updatedInteraction = await interactionPatchService.UpdateAsync(interaction, interactionPatchRequest);
 
+            if (updatedInteraction != null)
+                await interactionPatchService.SendToServiceBusQueueAsync(updatedInteraction, customerGuid, req.RequestUri.AbsoluteUri);
+
             return updatedInteraction == null ? 
                 HttpResponseMessageHelper.BadRequest(interactionGuid) : 
                 HttpResponseMessageHelper.Ok(JsonHelper.SerializeObject(updatedInteraction));

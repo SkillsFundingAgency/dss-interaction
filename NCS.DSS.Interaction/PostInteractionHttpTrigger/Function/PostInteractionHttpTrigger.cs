@@ -76,6 +76,9 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 
             var interaction = await interactionPostService.CreateAsync(interactionRequest);
 
+            if (interaction != null)
+                await interactionPostService.SendToServiceBusQueueAsync(interaction, req.RequestUri.AbsoluteUri);
+
             return interaction == null
                 ? HttpResponseMessageHelper.BadRequest(customerGuid)
                 : HttpResponseMessageHelper.Created(JsonHelper.SerializeObject(interaction));
