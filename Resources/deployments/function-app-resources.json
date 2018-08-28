@@ -22,6 +22,18 @@
     },
     "functionAppName": {
       "type": "string"
+    },
+    "serviceBusAccessKey": {
+      "type": "string"
+    },
+    "serviceBusAccessKeyName": {
+      "type": "string"
+    },
+    "serviceBusBaseAddress": {
+      "type": "string"
+    },
+    "serviceBusQueueName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -75,8 +87,23 @@
             {
               "name": "CustomerCollectionId",
               "value": "customers"
+            },
+            {
+              "name": "KeyName",
+              "value": "[parameters('serviceBusAccessKeyName')]"
+            },
+            {
+              "name": "AccessKey",
+              "value": "[parameters('serviceBusAccessKey')]"
+            },
+            {
+              "name": "BaseAddress",
+              "value": "[parameters('serviceBusBaseAddress')]"
+            },
+            {
+              "name": "QueueName",
+              "value": "[parameters('serviceBusQueueName')]"
             }
-
           ]
         }
       }
