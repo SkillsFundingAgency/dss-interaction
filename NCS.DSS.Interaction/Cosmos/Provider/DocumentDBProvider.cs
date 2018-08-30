@@ -35,6 +35,32 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
 
         }
 
+        public async Task<bool> DoesCustomerHaveATerminationDate(Guid customerId)
+        {
+            var collectionUri = _documentDbHelper.CreateCustomerDocumentCollectionUri();
+
+            var client = _databaseClient.CreateDocumentClient();
+
+            var customerByIdQuery = client
+                ?.CreateDocumentQuery<Document>(collectionUri, new FeedOptions { MaxItemCount = 1 })
+                .Where(x => x.Id == customerId.ToString())
+                .AsDocumentQuery();
+
+            if (customerByIdQuery == null)
+                return false;
+
+            var customerQuery = await customerByIdQuery.ExecuteNextAsync<Document>();
+
+            var customer = customerQuery?.FirstOrDefault();
+
+            if (customer == null)
+                return false;
+
+            var dateOfTermination = customer.GetPropertyValue<DateTime?>("DateOfTermination");
+
+            return dateOfTermination.HasValue;
+        }
+
         public async Task<ResourceResponse<Document>> GetInteractionAsync(Guid interactionId)
         {
             var documentUri = _documentDbHelper.CreateDocumentUri(interactionId);
