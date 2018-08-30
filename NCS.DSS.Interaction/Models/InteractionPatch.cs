@@ -17,11 +17,32 @@ namespace NCS.DSS.Interaction.Models
         [Example(Description = "2018-06-21T11:21:00")]
         public DateTime? DateandTimeOfInteraction { get; set; }
 
-        [Display(Description = "Channel reference data")]
+        [Display(Description = "Channel reference data   :   " +
+                                "1 - Face to face,  " +
+                                "2 - Telephone,  " +
+                                "3 - Webchat,  " +
+                                "4 - Videochat,  " +
+                                "5 - Email,  " +
+                                "6 - Social media,  " +
+                                "7 - SMS,  " +
+                                "8 - Post,  " +
+                                "9 - Co - browse,  " +
+                                "99 - Other")]
         [Example(Description = "1")]
         public Channel? Channel { get; set; }
 
-        [Display(Description = "Business event reference data")]
+        [Display(Description = "Interaction Type reference data   :   " +
+                                "1 - Transfer to touchpoint,   " +
+                                "2 - WebChat,   " +
+                                "3 - Book an appointment,   " +
+                                "4 - Creation of an action plan,   " +
+                                "5 - Telephone call,   " +
+                                "6 - Request to be contacted,   " +
+                                "7 - Request for technical help,   " +
+                                "8 - Provides feedback,   " +
+                                "9 - Complaint,   " +
+                                "10 - Voice of customer survey,   " +
+                                "99 - Other ")]
         [Example(Description = "2")]
         public InteractionType? InteractionType { get; set; }
 
