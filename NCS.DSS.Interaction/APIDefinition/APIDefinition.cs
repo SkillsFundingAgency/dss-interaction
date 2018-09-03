@@ -408,6 +408,7 @@ namespace NCS.DSS.Interaction.APIDefinition
         private static void SetParameterType(Type parameterType, dynamic opParam, dynamic definitions)
         {
             var inputType = parameterType;
+            string paramType = parameterType.UnderlyingSystemType.ToString();
 
             var setObject = opParam;
             if (inputType.IsArray)
@@ -417,53 +418,92 @@ namespace NCS.DSS.Interaction.APIDefinition
                 setObject = opParam.items;
                 parameterType = parameterType.GetElementType();
             }
-            else if (inputType.IsGenericType)
-            {
-                opParam.type = "array";
-                opParam.items = new ExpandoObject();
-                setObject = opParam.items;
-                parameterType = parameterType.GetGenericArguments()[0];
-            }
+            //else if (inputType.IsGenericType)
+            //{
+            //    opParam.type = "array";
+            //    opParam.items = new ExpandoObject();
+            //    setObject = opParam.items;
+            //    parameterType = parameterType.GetGenericArguments()[0];
+            //}
 
             if (inputType.Namespace == "System" || (inputType.IsGenericType && inputType.GetGenericArguments()[0].Namespace == "System"))
             {
-                switch (Type.GetTypeCode(inputType))
+                if (paramType.Contains("System.String"))
                 {
-                    case TypeCode.Int32:
-                        setObject.format = "int32";
-                        setObject.type = "integer";
-                        break;
-                    case TypeCode.Int64:
-                        setObject.format = "int64";
-                        setObject.type = "integer";
-                        break;
-                    case TypeCode.Single:
-                        setObject.format = "float";
-                        setObject.type = "number";
-                        break;
-                    case TypeCode.Double:
-                        setObject.format = "double";
-                        setObject.type = "number";
-                        break;
-                    case TypeCode.String:
-                        setObject.type = "string";
-                        break;
-                    case TypeCode.Byte:
-                        setObject.format = "byte";
-                        setObject.type = "string";
-                        break;
-                    case TypeCode.Boolean:
-                        setObject.type = "boolean";
-                        break;
-                    case TypeCode.DateTime:
-                        setObject.format = "date";
-                        setObject.type = "string";
-                        break;
-                    default:
-                        setObject.type = "string";
-                        break;
+                    setObject.type = "string";
                 }
+                else if (paramType.Contains("System.DateTime"))
+                {
+                    setObject.format = "date";
+                    setObject.type = "string";
+                }
+                else if (paramType.Contains("System.Int32"))
+                {
+                    setObject.format = "int32";
+                    setObject.type = "integer";
+                }
+                else if (paramType.Contains("System.Int64"))
+                {
+                    setObject.format = "int64";
+                    setObject.type = "integer";
+                }
+                else if (paramType.Contains("System.Single"))
+                {
+                    setObject.format = "float";
+                    setObject.type = "number";
+                }
+                else if (paramType.Contains("System.Boolean"))
+                {
+                    setObject.type = "boolean";
+                }
+                else
+                {
+                    setObject.type = "string";
+                }
+
             }
+
+            //if (inputType.Namespace == "System" || (inputType.IsGenericType && inputType.GetGenericArguments()[0].Namespace == "System"))
+            //{
+            //    TypeCode myTypeCode = Type.GetTypeCode(inputType);
+
+            //    switch (Type.GetTypeCode(inputType))
+            //    {
+            //        case TypeCode.Int32:
+            //            setObject.format = "int32";
+            //            setObject.type = "integer";
+            //            break;
+            //        case TypeCode.Int64:
+            //            setObject.format = "int64";
+            //            setObject.type = "integer";
+            //            break;
+            //        case TypeCode.Single:
+            //            setObject.format = "float";
+            //            setObject.type = "number";
+            //            break;
+            //        case TypeCode.Double:
+            //            setObject.format = "double";
+            //            setObject.type = "number";
+            //            break;
+            //        case TypeCode.String:
+            //            setObject.type = "string";
+            //            break;
+            //        case TypeCode.Byte:
+            //            setObject.format = "byte";
+            //            setObject.type = "string";
+            //            break;
+            //        case TypeCode.Boolean:
+            //            setObject.type = "boolean";
+            //            break;
+            //        case TypeCode.DateTime:
+            //            setObject.format = "date";
+            //            setObject.type = "string";
+            //            break;
+            //        default:
+            //            setObject.type = "string";
+            //            break;
+            //    }
+            //}
             else if (inputType.IsEnum)
             {
                 opParam.type = "string";
@@ -495,6 +535,7 @@ namespace NCS.DSS.Interaction.APIDefinition
                 AddParameterDefinition((IDictionary<string, object>)definitions, parameterType);
             }
         }
+
 
         public static string ToTitleCase(string str)
         {
