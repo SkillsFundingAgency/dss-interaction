@@ -76,6 +76,19 @@ namespace NCS.DSS.Interaction.Helpers
 
         #endregion
 
+        #region Forbidden(403)
+
+        public static HttpResponseMessage Forbidden(Guid id)
+        {
+            return new HttpResponseMessage(HttpStatusCode.Forbidden)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(id),
+                    Encoding.UTF8, "application/json")
+            };
+        }
+
+        #endregion
+
         #region UnprocessableEntity(422)
 
         public static HttpResponseMessage UnprocessableEntity(HttpRequestMessage req)
