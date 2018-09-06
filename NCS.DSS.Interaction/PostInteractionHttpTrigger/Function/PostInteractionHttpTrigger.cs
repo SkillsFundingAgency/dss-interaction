@@ -43,6 +43,13 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
                 return HttpResponseMessageHelper.BadRequest();
             }
 
+            var ApimURL = httpRequestMessageHelper.GetApimURL(req);
+            if (string.IsNullOrEmpty(ApimURL))
+            {
+                log.LogInformation("Unable to locate 'apimurl' in request header");
+                return HttpResponseMessageHelper.BadRequest();
+            }
+
             log.LogInformation("Post Interaction C# HTTP trigger function processed a request. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
@@ -82,7 +89,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             var interaction = await interactionPostService.CreateAsync(interactionRequest);
 
             if (interaction != null)
-                await interactionPostService.SendToServiceBusQueueAsync(interaction, req.RequestUri.AbsoluteUri);
+                await interactionPostService.SendToServiceBusQueueAsync(interaction, ApimURL);
 
             return interaction == null
                 ? HttpResponseMessageHelper.BadRequest(customerGuid)

@@ -8,5 +8,6 @@ namespace NCS.DSS.Interaction.Helpers
     {
         Task<T> GetInteractionFromRequest<T>(HttpRequestMessage req);
         string GetTouchpointId(HttpRequestMessage req);
+        string GetApimURL(HttpRequestMessage req);
     }
 }
