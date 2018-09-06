@@ -1,0 +1,17 @@
+<policies>
+  <inbound>
+    <set-header name="apimurl">
+      <value>@(String.Format(@"{0}://{1}{2}", context.Request.OriginalUrl.Scheme, context.Request.OriginalUrl.Host, context.Request.OriginalUrl.Path))</value>
+    </set-header>
+    <base />
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>
