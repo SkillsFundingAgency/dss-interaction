@@ -27,7 +27,7 @@ namespace NCS.DSS.Interaction.ServiceBus
                 TitleMessage = "New Interaction record {" + interaction.InteractionId + "} added at " + DateTime.UtcNow,
                 CustomerGuid = interaction.CustomerId,
                 LastModifiedDate = interaction.LastModifiedDate,
-                URL = reqUrl,
+                URL = reqUrl + interaction.InteractionId,
                 IsNewCustomer = false,
                 TouchpointId = interaction.LastModifiedTouchpointId
             };
