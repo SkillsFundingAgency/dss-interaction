@@ -29,8 +29,7 @@ namespace NCS.DSS.Interaction.ServiceBus
                 LastModifiedDate = interaction.LastModifiedDate,
                 URL = reqUrl + "/" + interaction.InteractionId,
                 IsNewCustomer = false,
-                TouchpointId = interaction.LastModifiedTouchpointId,
-                TargetIdTransfer = ""
+                TouchpointId = interaction.LastModifiedTouchpointId
             };
 
             var msg = new BrokeredMessage(new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(messageModel))))
@@ -55,8 +54,7 @@ namespace NCS.DSS.Interaction.ServiceBus
                 LastModifiedDate = interaction.LastModifiedDate,
                 URL = reqUrl,
                 IsNewCustomer = false,
-                TouchpointId = interaction.LastModifiedTouchpointId,
-                TargetIdTransfer = ""
+                TouchpointId = interaction.LastModifiedTouchpointId
             };
 
             var msg = new BrokeredMessage(new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(messageModel))))
@@ -79,7 +77,6 @@ namespace NCS.DSS.Interaction.ServiceBus
         public string URL { get; set; }
         public bool IsNewCustomer { get; set; }
         public string TouchpointId { get; set; }
-        public string TargetIdTransfer { get; set; }
     }
 
 }
