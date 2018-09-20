@@ -8,7 +8,7 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
 {
     public interface IDocumentDBProvider
     {
-        bool DoesCustomerResourceExist(Guid customerId);
+        Task<bool> DoesCustomerResourceExist(Guid customerId);
         Task<bool> DoesCustomerHaveATerminationDate(Guid customerId);
         Task<ResourceResponse<Document>> GetInteractionAsync(Guid interactionId);
         Task<Models.Interaction> GetInteractionForCustomerAsync(Guid customerId, Guid interactionId);
