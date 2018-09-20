@@ -4,11 +4,11 @@ using Microsoft.Azure.Documents.Client;
 
 namespace NCS.DSS.Interaction.Cosmos.Client
 {
-    public class DocumentDBClient : IDocumentDBClient
+    public static class DocumentDBClient
     {
-        private DocumentClient _documentClient;
+        private static DocumentClient _documentClient;
 
-        public DocumentClient CreateDocumentClient()
+        public static DocumentClient CreateDocumentClient()
         {
             if (_documentClient != null)
                 return _documentClient;

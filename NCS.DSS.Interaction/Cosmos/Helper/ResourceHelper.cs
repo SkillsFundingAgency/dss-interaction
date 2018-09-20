@@ -6,10 +6,10 @@ namespace NCS.DSS.Interaction.Cosmos.Helper
 {
     public class ResourceHelper : IResourceHelper
     {
-        public bool DoesCustomerExist(Guid customerId)
+        public async Task<bool> DoesCustomerExist(Guid customerId)
         {
             var documentDbProvider = new DocumentDBProvider();
-            var doesCustomerExist = documentDbProvider.DoesCustomerResourceExist(customerId);
+            var doesCustomerExist = await documentDbProvider.DoesCustomerResourceExist(customerId);
 
             return doesCustomerExist;
         }

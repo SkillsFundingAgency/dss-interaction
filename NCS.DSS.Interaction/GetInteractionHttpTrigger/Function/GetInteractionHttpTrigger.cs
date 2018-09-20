@@ -42,7 +42,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return HttpResponseMessageHelper.BadRequest(customerGuid);
 
-            var doesCustomerExist = resourceHelper.DoesCustomerExist(customerGuid);
+            var doesCustomerExist = await resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
                 return HttpResponseMessageHelper.NoContent(customerGuid);

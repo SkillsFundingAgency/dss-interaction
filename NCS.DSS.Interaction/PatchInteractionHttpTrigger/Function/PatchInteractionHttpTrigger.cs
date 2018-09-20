@@ -80,7 +80,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             if (errors != null && errors.Any())
                 return HttpResponseMessageHelper.UnprocessableEntity( errors);
 
-            var doesCustomerExist = resourceHelper.DoesCustomerExist(customerGuid);
+            var doesCustomerExist = await resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
                 return HttpResponseMessageHelper.NoContent(customerGuid);
