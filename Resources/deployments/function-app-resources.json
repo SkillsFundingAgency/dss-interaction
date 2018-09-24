@@ -57,6 +57,10 @@
               "value": "[toUpper(parameters('configEnvironmentName'))]"
             },
             {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~1"
+            },
+            {
               "name": "MSDEPLOY_RENAME_LOCKED_FILES",
               "value": "1"
             },
