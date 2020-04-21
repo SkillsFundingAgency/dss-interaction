@@ -34,6 +34,12 @@ namespace NCS.DSS.Interaction.ReferenceData
         [Description("Voice of customer survey")]
         VoiceOfCustomerSurvey = 10,
 
+        [Description("Call back successful")]
+        CallBackSuccess = 11,
+
+        [Description("Call back unsuccessful")]
+        CallBackUnSuccessful = 12,
+
         [Description("Other")]
         Other = 99
 
