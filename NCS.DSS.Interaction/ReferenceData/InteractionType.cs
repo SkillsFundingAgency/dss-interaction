@@ -33,7 +33,7 @@ namespace NCS.DSS.Interaction.ReferenceData
 
         [Description("Voice of customer survey")]
         VoiceOfCustomerSurvey = 10,
-
+        //For build
         [Description("Call back successful")]
         CallBackSuccess = 11,
 
