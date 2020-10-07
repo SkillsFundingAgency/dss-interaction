@@ -1,5 +1,3 @@
-using DFC.Functions.DI.Standard.Attributes;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
@@ -18,8 +16,20 @@ using System.Threading.Tasks;
 
 namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 {
-    public static class PostInteractionHttpTrigger
+    public class PostInteractionHttpTrigger
     {
+        IResourceHelper resourceHelper;
+        IHttpRequestMessageHelper httpRequestMessageHelper;
+        IPostInteractionHttpTriggerService interactionPostService;
+        IValidate validate;
+        public PostInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestMessageHelper httpRequestMessageHelper, IPostInteractionHttpTriggerService interactionPostService, IValidate validate)
+        {
+            this.resourceHelper = resourceHelper;
+            this.httpRequestMessageHelper = httpRequestMessageHelper;
+            this.interactionPostService = interactionPostService;
+            this.validate = validate;
+        }
+
         [FunctionName("Post")]
         [Response(HttpStatusCode = (int)HttpStatusCode.Created, Description = "Interaction Created", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interaction does not exist", ShowSchema = false)]
@@ -28,11 +38,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new interaction resource.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")] HttpRequestMessage req, ILogger log, string customerId,
-            [Inject] IResourceHelper resourceHelper,
-            [Inject] IHttpRequestMessageHelper httpRequestMessageHelper,
-            [Inject] IValidate validate,
-            [Inject] IPostInteractionHttpTriggerService interactionPostService)
+        public  async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")] HttpRequestMessage req, ILogger log, string customerId)
         {
             var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))

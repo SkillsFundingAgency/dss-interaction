@@ -30,6 +30,7 @@ namespace NCS.DSS.Interaction.Tests
         private IPatchInteractionHttpTriggerService _patchInteractionHttpTriggerService;
         private Models.Interaction _interaction;
         private Models.InteractionPatch _interactionPatch;
+        private PatchInteractionHttpTrigger.Function.PatchInteractionHttpTrigger _function;
 
         [SetUp]
         public void Setup()
@@ -51,6 +52,7 @@ namespace NCS.DSS.Interaction.Tests
             _patchInteractionHttpTriggerService = Substitute.For<IPatchInteractionHttpTriggerService>();
             _httpRequestMessageHelper.GetTouchpointId(_request).Returns("0000000001");
             _httpRequestMessageHelper.GetApimURL(_request).Returns("http://localhost:7071/");
+            _function = new PatchInteractionHttpTrigger.Function.PatchInteractionHttpTrigger(_resourceHelper, _httpRequestMessageHelper, _patchInteractionHttpTriggerService, _validate);
         }
 
         [Test]
@@ -191,8 +193,7 @@ namespace NCS.DSS.Interaction.Tests
 
         private async Task<HttpResponseMessage> RunFunction(string customerId, string interactionId)
         {
-            return await PatchInteractionHttpTrigger.Function.PatchInteractionHttpTrigger.Run(
-                _request, _log, customerId, interactionId, _resourceHelper, _httpRequestMessageHelper, _validate, _patchInteractionHttpTriggerService).ConfigureAwait(false);
+            return await _function.Run(_request, _log, customerId, interactionId).ConfigureAwait(false);
         }
 
     }

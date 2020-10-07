@@ -22,6 +22,7 @@ namespace NCS.DSS.Interaction.Tests
         private IResourceHelper _resourceHelper;
         private IHttpRequestMessageHelper _httpRequestMessageHelper;
         private IGetInteractionHttpTriggerService _getInteractionHttpTriggerService;
+        private GetInteractionHttpTrigger.Function.GetInteractionHttpTrigger _function;
 
         [SetUp]
         public void Setup()
@@ -38,6 +39,7 @@ namespace NCS.DSS.Interaction.Tests
             _httpRequestMessageHelper = Substitute.For<IHttpRequestMessageHelper>();
             _getInteractionHttpTriggerService = Substitute.For<IGetInteractionHttpTriggerService>();
             _httpRequestMessageHelper.GetTouchpointId(_request).Returns("0000000001");
+            _function = new GetInteractionHttpTrigger.Function.GetInteractionHttpTrigger(_resourceHelper, _httpRequestMessageHelper, _getInteractionHttpTriggerService);
         }
 
         [Test]
@@ -110,8 +112,7 @@ namespace NCS.DSS.Interaction.Tests
 
         private async Task<HttpResponseMessage> RunFunction(string customerId)
         {
-            return await GetInteractionHttpTrigger.Function.GetInteractionHttpTrigger.Run(
-                _request, _log, customerId, _resourceHelper, _httpRequestMessageHelper ,_getInteractionHttpTriggerService).ConfigureAwait(false);
+            return await _function.Run(_request, _log, customerId).ConfigureAwait(false);
         }
 
     }

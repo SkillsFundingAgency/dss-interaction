@@ -28,6 +28,7 @@ namespace NCS.DSS.Interaction.Tests
         private IHttpRequestMessageHelper _httpRequestMessageHelper;
         private IPostInteractionHttpTriggerService _postInteractionHttpTriggerService;
         private Models.Interaction _interaction;
+        private PostInteractionHttpTrigger.Function.PostInteractionHttpTrigger _function;
 
         [SetUp]
         public void Setup()
@@ -48,6 +49,7 @@ namespace NCS.DSS.Interaction.Tests
             _postInteractionHttpTriggerService = Substitute.For<IPostInteractionHttpTriggerService>();
             _httpRequestMessageHelper.GetTouchpointId(_request).Returns("0000000001");
             _httpRequestMessageHelper.GetApimURL(_request).Returns("http://localhost:7071/");
+            _function = new PostInteractionHttpTrigger.Function.PostInteractionHttpTrigger(_resourceHelper, _httpRequestMessageHelper, _postInteractionHttpTriggerService, _validate);
         }
 
         [Test]
@@ -164,8 +166,7 @@ namespace NCS.DSS.Interaction.Tests
 
         private async Task<HttpResponseMessage> RunFunction(string customerId)
         {
-            return await PostInteractionHttpTrigger.Function.PostInteractionHttpTrigger.Run(
-                _request, _log, customerId, _resourceHelper, _httpRequestMessageHelper, _validate, _postInteractionHttpTriggerService).ConfigureAwait(false);
+            return await _function.Run(_request, _log, customerId).ConfigureAwait(false);
         }
 
     }

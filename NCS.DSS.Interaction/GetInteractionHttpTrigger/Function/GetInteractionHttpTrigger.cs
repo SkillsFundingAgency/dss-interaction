@@ -1,14 +1,12 @@
-using DFC.Functions.DI.Standard.Attributes;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Annotations;
 using NCS.DSS.Interaction.Cosmos.Helper;
+using NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Service;
 using NCS.DSS.Interaction.GetInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Helpers;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http;
@@ -16,8 +14,19 @@ using System.Threading.Tasks;
 
 namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
 {
-    public static class GetInteractionHttpTrigger
+    public class GetInteractionHttpTrigger
     {
+
+        IResourceHelper resourceHelper;
+        IHttpRequestMessageHelper httpRequestMessageHelper;
+        IGetInteractionHttpTriggerService interactionGetService;
+        public GetInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestMessageHelper httpRequestMessageHelper, IGetInteractionHttpTriggerService interactionGetService)
+        {
+            this.resourceHelper = resourceHelper;
+            this.httpRequestMessageHelper = httpRequestMessageHelper;
+            this.interactionGetService = interactionGetService;
+        }
+
         [FunctionName("Get")]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interactions found", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interactions do not exist", ShowSchema = false)]
@@ -25,10 +34,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Put", Description = "Ability to return all interactions for a given customer.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, ILogger log, string customerId,
-            [Inject]IResourceHelper resourceHelper,
-            [Inject]IHttpRequestMessageHelper httpRequestMessageHelper,
-            [Inject]IGetInteractionHttpTriggerService interactionGetService)
+        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, ILogger log, string customerId)
         {
             var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))

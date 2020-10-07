@@ -1,4 +1,3 @@
-using DFC.Functions.DI.Standard.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -19,8 +18,20 @@ using System.Threading.Tasks;
 
 namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 {
-    public static class PatchInteractionHttpTrigger
+    public class PatchInteractionHttpTrigger
     {
+        IResourceHelper resourceHelper;
+        IHttpRequestMessageHelper httpRequestMessageHelper;
+        IPatchInteractionHttpTriggerService interactionPatchService;
+        IValidate validate;
+        public PatchInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestMessageHelper httpRequestMessageHelper, IPatchInteractionHttpTriggerService interactionPatchService, IValidate validate)
+        {
+            this.resourceHelper = resourceHelper;
+            this.httpRequestMessageHelper = httpRequestMessageHelper;
+            this.interactionPatchService = interactionPatchService;
+            this.validate = validate;
+        }
+
         [FunctionName("Patch")]
         [ProducesResponseTypeAttribute(typeof(Models.Interaction), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interaction Updated", ShowSchema = true)]
@@ -30,11 +41,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update an interaction record.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequestMessage req, ILogger log, string customerId, string interactionId,
-            [Inject] IResourceHelper resourceHelper,
-            [Inject] IHttpRequestMessageHelper httpRequestMessageHelper,
-            [Inject] IValidate validate,
-            [Inject] IPatchInteractionHttpTriggerService interactionPatchService)
+        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequestMessage req, ILogger log, string customerId, string interactionId)
         {
             var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
