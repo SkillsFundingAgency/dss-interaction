@@ -1,25 +1,25 @@
-using System;
-using System.ComponentModel.DataAnnotations;
+using DFC.Functions.DI.Standard.Attributes;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using System.Net.Http;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Annotations;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.GetInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Helpers;
-using NCS.DSS.Interaction.Ioc;
-using Microsoft.AspNetCore.Mvc;
-using DFC.Functions.DI.Standard.Attributes;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
 {
     public static class GetInteractionHttpTrigger
     {
         [FunctionName("Get")]
-        [ProducesResponseTypeAttribute(typeof(Models.Interaction), (int)HttpStatusCode.OK)]
+        [ProducesResponseTypeAttribute(typeof(List<Models.Interaction>), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interactions found", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interactions do not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
