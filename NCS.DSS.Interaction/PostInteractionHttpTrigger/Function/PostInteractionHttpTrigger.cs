@@ -21,7 +21,6 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
     public static class PostInteractionHttpTrigger
     {
         [FunctionName("Post")]
-        [ProducesResponseTypeAttribute(typeof(Models.Interaction), (int)HttpStatusCode.Created)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Created, Description = "Interaction Created", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interaction does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]

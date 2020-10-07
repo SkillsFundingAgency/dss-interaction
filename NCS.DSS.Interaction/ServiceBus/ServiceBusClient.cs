@@ -12,10 +12,10 @@ namespace NCS.DSS.Interaction.ServiceBus
         public static readonly string AccessKey = Environment.GetEnvironmentVariable("AccessKey");
         public static readonly string BaseAddress = Environment.GetEnvironmentVariable("BaseAddress");
         public static readonly string QueueName = Environment.GetEnvironmentVariable("QueueName");
-
+        public static readonly string ServiceBusConnectionString = $"Endpoint={BaseAddress};SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey={AccessKey}";
         public static async Task SendPostMessageAsync(Models.Interaction interaction, string reqUrl)
         {
-            var queueClient = new QueueClient(KeyName, QueueName);
+            var queueClient = new QueueClient(ServiceBusConnectionString, QueueName);
 
             var messageModel = new MessageModel()
             {
@@ -38,7 +38,7 @@ namespace NCS.DSS.Interaction.ServiceBus
 
         public static async Task SendPatchMessageAsync(Models.Interaction interaction, Guid customerId, string reqUrl)
         {
-            var queueClient = new QueueClient(KeyName, QueueName);
+            var queueClient = new QueueClient(ServiceBusConnectionString, QueueName);
             var messageModel = new MessageModel
             {
                 TitleMessage = "Interaction record modification for {" + customerId + "} at " + DateTime.UtcNow,
