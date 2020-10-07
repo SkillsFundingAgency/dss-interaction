@@ -1,36 +1,35 @@
-using System;
-using System.ComponentModel.DataAnnotations;
+using DFC.Functions.DI.Standard.Attributes;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
-using Newtonsoft.Json;
-using System.Net.Http;
-using System.Net;
-using System.Threading.Tasks;
-using System.Web.Http.Description;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Annotations;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Service;
 using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.Ioc;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
 {
     public static class GetInteractionByIdHttpTrigger
     {
         [FunctionName("GetById")]
-        [ResponseType(typeof(Models.Interaction))]
+        [ProducesResponseTypeAttribute(typeof(Models.Interaction), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interaction found", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interaction does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Get", Description = "Ability to retrieve an individual interaction record.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, ILogger log, string customerId, string interactionId,
-            [Inject]IResourceHelper resourceHelper,
-            [Inject]IHttpRequestMessageHelper httpRequestMessageHelper,
-            [Inject]IGetInteractionByIdHttpTriggerService interactionGetService)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequestMessage req, ILogger log, string customerId, string interactionId,
+            [Inject] IResourceHelper resourceHelper,
+            [Inject] IHttpRequestMessageHelper httpRequestMessageHelper,
+            [Inject] IGetInteractionByIdHttpTriggerService interactionGetService)
         {
             var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
@@ -54,7 +53,7 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
 
             var interaction = await interactionGetService.GetInteractionForCustomerAsync(customerGuid, interactionGuid);
 
-            return interaction == null ? 
+            return interaction == null ?
                 HttpResponseMessageHelper.NoContent(interactionGuid) :
                 HttpResponseMessageHelper.Ok(JsonHelper.SerializeObject(interaction));
         }

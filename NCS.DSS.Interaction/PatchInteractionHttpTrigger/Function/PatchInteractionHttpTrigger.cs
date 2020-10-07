@@ -1,29 +1,28 @@
+using DFC.Functions.DI.Standard.Attributes;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Logging;
+using NCS.DSS.Interaction.Annotations;
+using NCS.DSS.Interaction.Cosmos.Helper;
+using NCS.DSS.Interaction.Helpers;
+using NCS.DSS.Interaction.Models;
+using NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service;
+using NCS.DSS.Interaction.Validation;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http.Description;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Logging;
-using NCS.DSS.Interaction.Annotations;
-using NCS.DSS.Interaction.Cosmos.Helper;
-using NCS.DSS.Interaction.Helpers;
-using NCS.DSS.Interaction.Ioc;
-using NCS.DSS.Interaction.Models;
-using NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service;
-using NCS.DSS.Interaction.Validation;
-using Newtonsoft.Json;
 
 namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 {
     public static class PatchInteractionHttpTrigger
     {
         [FunctionName("Patch")]
-        [ResponseType(typeof(Models.Interaction))]
+        [ProducesResponseTypeAttribute(typeof(Models.Interaction), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interaction Updated", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interaction does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
@@ -31,11 +30,11 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update an interaction record.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, ILogger log, string customerId, string interactionId,
-            [Inject]IResourceHelper resourceHelper,
-            [Inject]IHttpRequestMessageHelper httpRequestMessageHelper,
-            [Inject]IValidate validate,
-            [Inject]IPatchInteractionHttpTriggerService interactionPatchService)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequestMessage req, ILogger log, string customerId, string interactionId,
+            [Inject] IResourceHelper resourceHelper,
+            [Inject] IHttpRequestMessageHelper httpRequestMessageHelper,
+            [Inject] IValidate validate,
+            [Inject] IPatchInteractionHttpTriggerService interactionPatchService)
         {
             var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
@@ -78,7 +77,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             var errors = validate.ValidateResource(interactionPatchRequest);
 
             if (errors != null && errors.Any())
-                return HttpResponseMessageHelper.UnprocessableEntity( errors);
+                return HttpResponseMessageHelper.UnprocessableEntity(errors);
 
             var doesCustomerExist = await resourceHelper.DoesCustomerExist(customerGuid);
 
@@ -100,8 +99,8 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             if (updatedInteraction != null)
                 await interactionPatchService.SendToServiceBusQueueAsync(updatedInteraction, customerGuid, ApimURL);
 
-            return updatedInteraction == null ? 
-                HttpResponseMessageHelper.BadRequest(interactionGuid) : 
+            return updatedInteraction == null ?
+                HttpResponseMessageHelper.BadRequest(interactionGuid) :
                 HttpResponseMessageHelper.Ok(JsonHelper.SerializeObject(updatedInteraction));
         }
     }

@@ -1,28 +1,27 @@
+using DFC.Functions.DI.Standard.Attributes;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Logging;
+using NCS.DSS.Interaction.Annotations;
+using NCS.DSS.Interaction.Cosmos.Helper;
+using NCS.DSS.Interaction.Helpers;
+using NCS.DSS.Interaction.PostInteractionHttpTrigger.Service;
+using NCS.DSS.Interaction.Validation;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http.Description;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Logging;
-using NCS.DSS.Interaction.Annotations;
-using NCS.DSS.Interaction.Cosmos.Helper;
-using NCS.DSS.Interaction.Helpers;
-using NCS.DSS.Interaction.Ioc;
-using NCS.DSS.Interaction.PostInteractionHttpTrigger.Service;
-using NCS.DSS.Interaction.Validation;
-using Newtonsoft.Json;
 
 namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 {
     public static class PostInteractionHttpTrigger
     {
         [FunctionName("Post")]
-        [ResponseType(typeof(Models.Interaction))]
+        [ProducesResponseTypeAttribute(typeof(Models.Interaction), (int)HttpStatusCode.Created)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Created, Description = "Interaction Created", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interaction does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
@@ -30,11 +29,11 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new interaction resource.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")]HttpRequestMessage req, ILogger log, string customerId,
-            [Inject]IResourceHelper resourceHelper,
-            [Inject]IHttpRequestMessageHelper httpRequestMessageHelper,
-            [Inject]IValidate validate,
-            [Inject]IPostInteractionHttpTriggerService interactionPostService)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")] HttpRequestMessage req, ILogger log, string customerId,
+            [Inject] IResourceHelper resourceHelper,
+            [Inject] IHttpRequestMessageHelper httpRequestMessageHelper,
+            [Inject] IValidate validate,
+            [Inject] IPostInteractionHttpTriggerService interactionPostService)
         {
             var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
@@ -75,7 +74,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 
             if (errors != null && errors.Any())
                 return HttpResponseMessageHelper.UnprocessableEntity(errors);
-           
+
             var doesCustomerExist = await resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)

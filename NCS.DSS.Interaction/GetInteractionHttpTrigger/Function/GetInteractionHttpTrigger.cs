@@ -5,20 +5,21 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web.Http.Description;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Annotations;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.GetInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.Ioc;
+using Microsoft.AspNetCore.Mvc;
+using DFC.Functions.DI.Standard.Attributes;
 
 namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
 {
     public static class GetInteractionHttpTrigger
     {
         [FunctionName("Get")]
-        [ResponseType(typeof(Models.Interaction))]
+        [ProducesResponseTypeAttribute(typeof(Models.Interaction), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interactions found", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interactions do not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
