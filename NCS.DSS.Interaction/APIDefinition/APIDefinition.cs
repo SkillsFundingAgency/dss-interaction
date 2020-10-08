@@ -1,9 +1,7 @@
-﻿using DFC.Functions.DI.Standard.Attributes;
-using DFC.Swagger.Standard;
+﻿using DFC.Swagger.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using NCS.DSS.Interaction.Ioc;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;

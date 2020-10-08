@@ -1,17 +1,17 @@
 ﻿using DFC.Swagger.Standard;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using NCS.DSS.Interaction;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Service;
 using NCS.DSS.Interaction.GetInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Helpers;
-using NCS.DSS.Interaction.Ioc;
 using NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.PostInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Validation;
 
 [assembly: FunctionsStartup(typeof(Startup))]
-namespace NCS.DSS.Interaction.Ioc
+namespace NCS.DSS.Interaction
 {
     public class Startup : FunctionsStartup
     {
