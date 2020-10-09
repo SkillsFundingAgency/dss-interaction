@@ -1,4 +1,6 @@
-﻿using DFC.Swagger.Standard;
+﻿using DFC.HTTP.Standard;
+using DFC.JSON.Standard;
+using DFC.Swagger.Standard;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using NCS.DSS.Interaction;
@@ -23,6 +25,9 @@ namespace NCS.DSS.Interaction
             builder.Services.AddTransient<IPostInteractionHttpTriggerService, PostInteractionHttpTriggerService>();
             builder.Services.AddTransient<IResourceHelper, ResourceHelper>();
             builder.Services.AddTransient<IValidate, Validate>();
+            builder.Services.AddTransient<IJsonHelper, JsonHelper>();
+            builder.Services.AddTransient<IHttpResponseMessageHelper, HttpResponseMessageHelper>();
+            builder.Services.AddTransient<IHttpRequestHelper, HttpRequestHelper>();
         }
     }
 }
