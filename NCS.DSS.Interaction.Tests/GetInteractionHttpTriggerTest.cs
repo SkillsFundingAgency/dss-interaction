@@ -25,7 +25,6 @@ namespace NCS.DSS.Interaction.Tests
         private Mock<IHttpRequestHelper> _httpRequestMessageHelper;
         private Mock<IGetInteractionHttpTriggerService> _getInteractionHttpTriggerService;
         private GetInteractionHttpTrigger.Function.GetInteractionHttpTrigger _function;
-        private GetInteractionByIdHttpTrigger.Function.GetInteractionByIdHttpTrigger function;
         private IHttpResponseMessageHelper _httpResponseMessageHelper;
         private IJsonHelper _jsonHelper;
 
