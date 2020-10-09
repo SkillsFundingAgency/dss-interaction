@@ -1,10 +1,12 @@
+using DFC.HTTP.Standard;
+using DFC.JSON.Standard;
 using DFC.Swagger.Standard.Annotations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Cosmos.Helper;
-using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.Models;
 using NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Validation;
@@ -20,16 +22,21 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 {
     public class PatchInteractionHttpTrigger
     {
-        IResourceHelper resourceHelper;
-        IHttpRequestMessageHelper httpRequestMessageHelper;
-        IPatchInteractionHttpTriggerService interactionPatchService;
-        IValidate validate;
-        public PatchInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestMessageHelper httpRequestMessageHelper, IPatchInteractionHttpTriggerService interactionPatchService, IValidate validate)
+        private IResourceHelper _resourceHelper;
+        private IHttpRequestHelper _httpRequestMessageHelper;
+        private IPatchInteractionHttpTriggerService _interactionPatchService;
+        private IValidate _validate;
+        private readonly IHttpResponseMessageHelper _httpResponseMessageHelper;
+        private IJsonHelper _jsonHelper;
+
+        public PatchInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IPatchInteractionHttpTriggerService interactionPatchService, IValidate validate, IHttpResponseMessageHelper httpResponseMessageHelper, IJsonHelper jsonHelper)
         {
-            this.resourceHelper = resourceHelper;
-            this.httpRequestMessageHelper = httpRequestMessageHelper;
-            this.interactionPatchService = interactionPatchService;
-            this.validate = validate;
+            _resourceHelper = resourceHelper;
+            _httpRequestMessageHelper = httpRequestMessageHelper;
+            _interactionPatchService = interactionPatchService;
+            _validate = validate;
+            _httpResponseMessageHelper = httpResponseMessageHelper;
+            _jsonHelper = jsonHelper;
         }
 
         [FunctionName("Patch")]
@@ -41,74 +48,74 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update an interaction record.")]
-        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequestMessage req, ILogger log, string customerId, string interactionId)
+        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, ILogger log, string customerId, string interactionId)
         {
-            var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
+            var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
                 log.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
-                return HttpResponseMessageHelper.BadRequest();
+                return _httpResponseMessageHelper.BadRequest();
             }
 
-            var ApimURL = httpRequestMessageHelper.GetApimURL(req);
+            var ApimURL = _httpRequestMessageHelper.GetDssApimUrl(req);
             if (string.IsNullOrEmpty(ApimURL))
             {
                 log.LogInformation("Unable to locate 'apimurl' in request header");
-                return HttpResponseMessageHelper.BadRequest();
+                return _httpResponseMessageHelper.BadRequest();
             }
 
             log.LogInformation("Patch Interaction C# HTTP trigger function processed a request. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
-                return HttpResponseMessageHelper.BadRequest(customerGuid);
+                return _httpResponseMessageHelper.BadRequest(customerGuid);
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
-                return HttpResponseMessageHelper.BadRequest(interactionGuid);
+                return _httpResponseMessageHelper.BadRequest(interactionGuid);
 
             InteractionPatch interactionPatchRequest;
 
             try
             {
-                interactionPatchRequest = await httpRequestMessageHelper.GetInteractionFromRequest<Models.InteractionPatch>(req);
+                interactionPatchRequest = await _httpRequestMessageHelper.GetResourceFromRequest<Models.InteractionPatch>(req);
             }
             catch (JsonException ex)
             {
-                return HttpResponseMessageHelper.UnprocessableEntity(ex);
+                return _httpResponseMessageHelper.UnprocessableEntity(ex);
             }
 
             if (interactionPatchRequest == null)
-                return HttpResponseMessageHelper.UnprocessableEntity(req);
+                return _httpResponseMessageHelper.UnprocessableEntity(req);
 
             interactionPatchRequest.LastModifiedTouchpointId = touchpointId;
 
-            var errors = validate.ValidateResource(interactionPatchRequest);
+            var errors = _validate.ValidateResource(interactionPatchRequest);
 
             if (errors != null && errors.Any())
-                return HttpResponseMessageHelper.UnprocessableEntity(errors);
+                return _httpResponseMessageHelper.UnprocessableEntity(errors);
 
-            var doesCustomerExist = await resourceHelper.DoesCustomerExist(customerGuid);
+            var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
-                return HttpResponseMessageHelper.NoContent(customerGuid);
+                return _httpResponseMessageHelper.NoContent(customerGuid);
 
-            var isCustomerReadOnly = await resourceHelper.IsCustomerReadOnly(customerGuid);
+            var isCustomerReadOnly = await _resourceHelper.IsCustomerReadOnly(customerGuid);
 
             if (isCustomerReadOnly)
-                return HttpResponseMessageHelper.Forbidden(customerGuid);
+                return _httpResponseMessageHelper.Forbidden(customerGuid);
 
-            var interaction = await interactionPatchService.GetInteractionForCustomerAsync(customerGuid, interactionGuid);
+            var interaction = await _interactionPatchService.GetInteractionForCustomerAsync(customerGuid, interactionGuid);
 
             if (interaction == null)
-                return HttpResponseMessageHelper.NoContent(interactionGuid);
+                return _httpResponseMessageHelper.NoContent(interactionGuid);
 
-            var updatedInteraction = await interactionPatchService.UpdateAsync(interaction, interactionPatchRequest);
+            var updatedInteraction = await _interactionPatchService.UpdateAsync(interaction, interactionPatchRequest);
 
             if (updatedInteraction != null)
-                await interactionPatchService.SendToServiceBusQueueAsync(updatedInteraction, customerGuid, ApimURL);
+                await _interactionPatchService.SendToServiceBusQueueAsync(updatedInteraction, customerGuid, ApimURL);
 
             return updatedInteraction == null ?
-                HttpResponseMessageHelper.BadRequest(interactionGuid) :
-                HttpResponseMessageHelper.Ok(JsonHelper.SerializeObject(updatedInteraction));
+                _httpResponseMessageHelper.BadRequest(interactionGuid) :
+                _httpResponseMessageHelper.Ok(_jsonHelper.SerializeObjectAndRenameIdProperty(updatedInteraction, "id", "InteractionId"));
         }
     }
 }

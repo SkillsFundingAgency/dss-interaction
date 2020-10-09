@@ -5,7 +5,6 @@ using NCS.DSS.Interaction;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Service;
 using NCS.DSS.Interaction.GetInteractionHttpTrigger.Service;
-using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.PostInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Validation;
@@ -24,7 +23,6 @@ namespace NCS.DSS.Interaction
             builder.Services.AddTransient<IPostInteractionHttpTriggerService, PostInteractionHttpTriggerService>();
             builder.Services.AddTransient<IResourceHelper, ResourceHelper>();
             builder.Services.AddTransient<IValidate, Validate>();
-            builder.Services.AddTransient<IHttpRequestMessageHelper, HttpRequestMessageHelper>();
         }
     }
 }
