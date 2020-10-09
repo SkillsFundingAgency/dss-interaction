@@ -1,8 +1,8 @@
+using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using NCS.DSS.Interaction.Annotations;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Service;
 using NCS.DSS.Interaction.GetInteractionHttpTrigger.Service;
