@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
@@ -12,7 +13,7 @@ namespace NCS.DSS.Interaction.PutInteractionHttpTrigger
     {
         [Disable]
         [FunctionName("Put")]
-        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, TraceWriter log, string interactionId)
+        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, TraceWriter log, string interactionId)
         {
             log.Info("Put Interaction C# HTTP trigger function processed a request.");
 

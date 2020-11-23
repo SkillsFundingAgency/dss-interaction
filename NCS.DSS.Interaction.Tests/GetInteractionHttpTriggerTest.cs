@@ -1,14 +1,16 @@
-﻿using System;
+﻿using DFC.HTTP.Standard;
+using DFC.JSON.Standard;
+using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NCS.DSS.Interaction.Cosmos.Helper;
+using NCS.DSS.Interaction.GetInteractionHttpTrigger.Service;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using NCS.DSS.Interaction.Cosmos.Helper;
-using NCS.DSS.Interaction.GetInteractionHttpTrigger.Service;
-using NCS.DSS.Interaction.Helpers;
-using NSubstitute;
-using NUnit.Framework;
 
 namespace NCS.DSS.Interaction.Tests
 {
@@ -17,33 +19,35 @@ namespace NCS.DSS.Interaction.Tests
     {
         private const string ValidCustomerId = "7E467BDB-213F-407A-B86A-1954053D3C24";
         private const string InValidId = "1111111-2222-3333-4444-555555555555";
-        private ILogger _log;
-        private HttpRequestMessage _request;
-        private IResourceHelper _resourceHelper;
-        private IHttpRequestMessageHelper _httpRequestMessageHelper;
-        private IGetInteractionHttpTriggerService _getInteractionHttpTriggerService;
+        private Mock<ILogger> _log;
+        private DefaultHttpRequest _request;
+        private Mock<IResourceHelper> _resourceHelper;
+        private Mock<IHttpRequestHelper> _httpRequestMessageHelper;
+        private Mock<IGetInteractionHttpTriggerService> _getInteractionHttpTriggerService;
+        private GetInteractionHttpTrigger.Function.GetInteractionHttpTrigger _function;
+        private IHttpResponseMessageHelper _httpResponseMessageHelper;
+        private IJsonHelper _jsonHelper;
 
         [SetUp]
         public void Setup()
         {
-            _request = new HttpRequestMessage()
-            {
-                Content = new StringContent(string.Empty),
-                RequestUri =
-                    new Uri($"http://localhost:7071/api/Customers/7E467BDB-213F-407A-B86A-1954053D3C24/Interactions/")
-            };
+            _request = null;
 
-            _log = Substitute.For<ILogger>();
-            _resourceHelper = Substitute.For<IResourceHelper>();
-            _httpRequestMessageHelper = Substitute.For<IHttpRequestMessageHelper>();
-            _getInteractionHttpTriggerService = Substitute.For<IGetInteractionHttpTriggerService>();
-            _httpRequestMessageHelper.GetTouchpointId(_request).Returns("0000000001");
+            _log = new Mock<ILogger>();
+            _resourceHelper = new Mock<IResourceHelper >();
+            _httpRequestMessageHelper = new Mock<IHttpRequestHelper>();
+            _getInteractionHttpTriggerService = new Mock<IGetInteractionHttpTriggerService>();
+            _httpResponseMessageHelper = new HttpResponseMessageHelper();
+            _jsonHelper = new JsonHelper();
+
+            _function = new GetInteractionHttpTrigger.Function.GetInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _getInteractionHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper);
         }
 
         [Test]
         public async Task GetInteractionHttpTrigger_ReturnsStatusCodeBadRequest_WhenTouchpointIdIsNotProvided()
         {
-            _httpRequestMessageHelper.GetTouchpointId(_request).Returns((string)null);
+            // Arrange
+            _httpRequestMessageHelper.Setup(x=>x.GetDssTouchpointId(_request)).Returns((string)null);
 
             // Act
             var result = await RunFunction(ValidCustomerId);
@@ -57,6 +61,7 @@ namespace NCS.DSS.Interaction.Tests
         public async Task GetInteractionHttpTrigger_ReturnsStatusCodeBadRequest_WhenCustomerIdIsInvalid()
         {
             // Act
+            _httpRequestMessageHelper.Setup(x=>x.GetDssTouchpointId(_request)).Returns("0000000001");
             var result = await RunFunction(InValidId);
 
             // Assert
@@ -67,7 +72,9 @@ namespace NCS.DSS.Interaction.Tests
         [Test]
         public async Task GetInteractionHttpTrigger_ReturnsStatusCodeNoContent_WhenCustomerDoesNotExist()
         {
-            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(false);
+            // Arrange
+            _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _resourceHelper.Setup(x=>x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(false));
 
             // Act
             var result = await RunFunction(ValidCustomerId);
@@ -80,9 +87,10 @@ namespace NCS.DSS.Interaction.Tests
         [Test]
         public async Task GetInteractionHttpTrigger_ReturnsStatusCodeNoContent_WhenInteractionDoesNotExist()
         {
-            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
-
-            _getInteractionHttpTriggerService.GetInteractionsAsync(Arg.Any<Guid>()).Returns(Task.FromResult<List<Models.Interaction>>(null).Result);
+            // Arrange
+            _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _resourceHelper.Setup(x=>x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
+            _getInteractionHttpTriggerService.Setup(x=>x.GetInteractionsAsync(It.IsAny<Guid>())).Returns(Task.FromResult<List<Models.Interaction>>(null));
 
             // Act
             var result = await RunFunction(ValidCustomerId);
@@ -95,10 +103,11 @@ namespace NCS.DSS.Interaction.Tests
         [Test]
         public async Task GetInteractionHttpTrigger_ReturnsStatusCodeOk_WhenInteractionExists()
         {
-            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
-
+            // Arrange
+            _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _resourceHelper.Setup(x=>x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
             var listOfInteractiones = new List<Models.Interaction>();
-            _getInteractionHttpTriggerService.GetInteractionsAsync(Arg.Any<Guid>()).Returns(Task.FromResult<List<Models.Interaction>>(listOfInteractiones).Result);
+            _getInteractionHttpTriggerService.Setup(x=>x.GetInteractionsAsync(It.IsAny<Guid>())).Returns(Task.FromResult<List<Models.Interaction>>(listOfInteractiones));
 
             // Act
             var result = await RunFunction(ValidCustomerId);
@@ -110,8 +119,7 @@ namespace NCS.DSS.Interaction.Tests
 
         private async Task<HttpResponseMessage> RunFunction(string customerId)
         {
-            return await GetInteractionHttpTrigger.Function.GetInteractionHttpTrigger.Run(
-                _request, _log, customerId, _resourceHelper, _httpRequestMessageHelper ,_getInteractionHttpTriggerService).ConfigureAwait(false);
+            return await _function.Run(_request, _log.Object, customerId).ConfigureAwait(false);
         }
 
     }

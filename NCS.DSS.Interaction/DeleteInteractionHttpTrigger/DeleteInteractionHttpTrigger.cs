@@ -1,10 +1,11 @@
-using System;
-using System.Net;
-using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json;
+using System;
+using System.Net;
+using System.Net.Http;
 
 namespace NCS.DSS.Interaction.DeleteInteractionHttpTrigger
 {
@@ -12,7 +13,7 @@ namespace NCS.DSS.Interaction.DeleteInteractionHttpTrigger
     {
         [Disable]
         [FunctionName("Delete")]
-        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "Customers/{customerId}/Interactions/{interactionId}")]HttpRequestMessage req, TraceWriter log, string interactionId)
+        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, TraceWriter log, string interactionId)
         {
             log.Info("Delete Interaction C# HTTP trigger function processed a request.");
 

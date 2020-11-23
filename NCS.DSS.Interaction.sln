@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2018
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCS.DSS.Interaction", "NCS.DSS.Interaction\NCS.DSS.Interaction.csproj", "{268942FE-7C99-47CF-8058-26A378DCB2F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCS.DSS.Interaction.Tests", "NCS.DSS.Interaction.Tests\NCS.DSS.Interaction.Tests.csproj", "{AC335478-3BE7-4563-8E5C-CB135AFC1D5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCS.DSS.Interaction.Tests", "NCS.DSS.Interaction.Tests\NCS.DSS.Interaction.Tests.csproj", "{AC335478-3BE7-4563-8E5C-CB135AFC1D5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
