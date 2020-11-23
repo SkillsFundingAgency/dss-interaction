@@ -54,6 +54,13 @@ jobs:
       BuildPlatform: $(BuildPlatform)
       BuildConfiguration: $(BuildConfiguration)
 
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(build.artifactstagingdirectory)/Azure'
+    inputs:
+        sourceFolder: 'Resources'
+        contents: '**'
+        targetFolder: '$(build.artifactstagingdirectory)/Azure'
+
 # Build the app with the dfc-dotnetcore-build template.  Runs if the output of TestBranchName is Version2+
 - job: BuildDotNetStandard
   displayName: Build-DotNetStandard
