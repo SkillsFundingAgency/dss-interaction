@@ -48,17 +48,11 @@ jobs:
   condition: and(succeeded(), eq(dependencies.TestBranchName.outputs['ExecuteTestBranchNameScript.FunctionAppVersion'], 'Version1'))
 
   steps:
-  - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetframework-build.yml@dfc-devops
+  - template: AzureDevOpsTemplates\Build\StepTemplates\dss-dotnetframework-build.yml@dfc-devops
     parameters:
       SolutionBaseName: $(SolutionBaseName)
       BuildPlatform: $(BuildPlatform)
       BuildConfiguration: $(BuildConfiguration)
-
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish Azure Resources Artifact'
-    inputs:
-        targetPath: '$(Build.SourcesDirectory)/Resources'
-        artifactName: ${{ variables.SolutionBaseName }}.Azure
 
 # Build the app with the dfc-dotnetcore-build template.  Runs if the output of TestBranchName is Version2+
 - job: BuildDotNetStandard
