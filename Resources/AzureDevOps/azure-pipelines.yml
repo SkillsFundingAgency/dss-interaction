@@ -54,13 +54,6 @@ jobs:
       BuildPlatform: $(BuildPlatform)
       BuildConfiguration: $(BuildConfiguration)
 
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(build.artifactstagingdirectory)/Azure'
-    inputs:
-        sourceFolder: 'Resources'
-        contents: '**'
-        targetFolder: '$(build.artifactstagingdirectory)/Azure'
-
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Azure Resources Artifact'
     inputs:
