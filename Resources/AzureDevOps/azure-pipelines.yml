@@ -62,10 +62,11 @@ jobs:
         targetFolder: '$(build.artifactstagingdirectory)/Azure'
 
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish Artifact: ${{ parameters.SolutionBaseName }}'
+    displayName: 'Publish Artifact: ${{ variables.SolutionBaseName }}'
     inputs:
-        targetPath: $(build.artifactstagingdirectory)
-        artifactName: ${{ parameters.SolutionBaseName }}.DeploymentPackages
+        pathtoPublish: $(build.artifactstagingdirectory)
+        artifactName: ${{ variables.SolutionBaseName }}
+        publishLocation: container
 
 # Build the app with the dfc-dotnetcore-build template.  Runs if the output of TestBranchName is Version2+
 - job: BuildDotNetStandard
