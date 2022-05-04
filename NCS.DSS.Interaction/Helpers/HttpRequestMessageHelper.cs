@@ -31,6 +31,18 @@ namespace NCS.DSS.Interaction.Helpers
 
             return string.IsNullOrEmpty(touchpointId) ? string.Empty : touchpointId;
         }
+        public string GetSubcontractorId(HttpRequestMessage req)
+        {
+            if (req?.Headers == null)
+                return null;
+
+            if (!req.Headers.Contains("SubcontractorId"))
+                return null;
+
+            var subcontractorId = req.Headers.GetValues("SubcontractorId").FirstOrDefault();
+
+            return string.IsNullOrEmpty(subcontractorId) ? string.Empty : subcontractorId;
+        }
 
         public string GetApimURL(HttpRequestMessage req)
         {
