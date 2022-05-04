@@ -39,6 +39,13 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
                 return HttpResponseMessageHelper.BadRequest();
             }
 
+            var subcontractorId = httpRequestMessageHelper.GetSubcontractorId(req);
+            if (string.IsNullOrEmpty(subcontractorId))
+            {
+                log.LogInformation("Unable to locate 'subcontractorId' in request header.");
+                return HttpResponseMessageHelper.BadRequest();
+            }
+
             log.LogInformation("Get Interaction By Id C# HTTP trigger function  processed a request. By Touchpoint. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))

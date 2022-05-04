@@ -37,6 +37,13 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
                 return HttpResponseMessageHelper.BadRequest();
             }
 
+            var subcontractorId = httpRequestMessageHelper.GetSubcontractorId(req);
+            if (string.IsNullOrEmpty(subcontractorId))
+            {
+                log.LogInformation("Unable to locate 'APIM-Subcontractor' in request header.");
+                return HttpResponseMessageHelper.BadRequest();
+            }
+
             log.LogInformation("Get Interaction C# HTTP trigger function  processed a request. By Touchpoint. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
