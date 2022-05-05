@@ -9,7 +9,6 @@ using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.PostInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Validation;
-using Newtonsoft.Json;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
@@ -105,7 +104,7 @@ namespace NCS.DSS.Interaction.Tests
         [Test]
         public async Task PostInteractionHttpTrigger_ReturnsStatusCodeUnprocessableEntity_WhenInteractionRequestIsInvalid()
         {
-            _httpRequestMessageHelper.GetInteractionFromRequest<Models.InteractionPatch>(_request).Throws(new JsonException());
+            _httpRequestMessageHelper.GetInteractionFromRequest<Models.InteractionPatch>(_request).Throws(new Newtonsoft.Json.JsonException());
 
             var result = await RunFunction(ValidCustomerId);
 
