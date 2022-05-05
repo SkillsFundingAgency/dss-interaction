@@ -38,12 +38,26 @@ namespace NCS.DSS.Interaction.Tests
             _httpRequestMessageHelper = Substitute.For<IHttpRequestMessageHelper>();
             _getInteractionHttpTriggerService = Substitute.For<IGetInteractionHttpTriggerService>();
             _httpRequestMessageHelper.GetTouchpointId(_request).Returns("0000000001");
+            _httpRequestMessageHelper.GetSubcontractorId(_request).Returns("9999999999");
         }
 
         [Test]
         public async Task GetInteractionHttpTrigger_ReturnsStatusCodeBadRequest_WhenTouchpointIdIsNotProvided()
         {
             _httpRequestMessageHelper.GetTouchpointId(_request).Returns((string)null);
+
+            // Act
+            var result = await RunFunction(ValidCustomerId);
+
+            // Assert
+            Assert.IsInstanceOf<HttpResponseMessage>(result);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Test]
+        public async Task GetInteractionHttpTrigger_ReturnsStatusCodeBadRequest_WhenSubcontractorIdIsNotProvided()
+        {
+            _httpRequestMessageHelper.GetSubcontractorId(_request).Returns((string)null);
 
             // Act
             var result = await RunFunction(ValidCustomerId);

@@ -47,6 +47,7 @@ namespace NCS.DSS.Interaction.Tests
             _validate = Substitute.For<IValidate>();
             _postInteractionHttpTriggerService = Substitute.For<IPostInteractionHttpTriggerService>();
             _httpRequestMessageHelper.GetTouchpointId(_request).Returns("0000000001");
+            _httpRequestMessageHelper.GetSubcontractorId(_request).Returns("9999999999");
             _httpRequestMessageHelper.GetApimURL(_request).Returns("http://localhost:7071/");
         }
 
@@ -54,6 +55,19 @@ namespace NCS.DSS.Interaction.Tests
         public async Task PostInteractionHttpTrigger_ReturnsStatusCodeBadRequest_WhenTouchpointIdIsNotProvided()
         {
             _httpRequestMessageHelper.GetTouchpointId(_request).Returns((string)null);
+
+            // Act
+            var result = await RunFunction(ValidCustomerId);
+
+            // Assert
+            Assert.IsInstanceOf<HttpResponseMessage>(result);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Test]
+        public async Task PostInteractionHttpTrigger_ReturnsStatusCodeBadRequest_WhenSubcontractorIdIsNotProvided()
+        {
+            _httpRequestMessageHelper.GetSubcontractorId(_request).Returns((string)null);
 
             // Act
             var result = await RunFunction(ValidCustomerId);
