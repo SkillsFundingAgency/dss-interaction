@@ -64,10 +64,26 @@ namespace NCS.DSS.Interaction.Tests
         }
 
         [Test]
+        public async Task GetInteractionByIdHttpTrigger_ReturnsStatusCodeBadRequest_WhenSubcontractorIdIsNotProvided()
+        {
+            // Arrange
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns<string>(null);
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
+
+            // Act
+            var result = await RunFunction(ValidCustomerId);
+
+            // Assert
+            Assert.IsInstanceOf<HttpResponseMessage>(result);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Test]
         public async Task PostInteractionHttpTrigger_ReturnsStatusCodeBadRequest_WhenCustomerIdIsInvalid()
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x=>x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestMessageHelper.Setup(x=>x.GetDssApimUrl(_request)).Returns("http://localhost:7071/");
 
             // Act
@@ -83,6 +99,7 @@ namespace NCS.DSS.Interaction.Tests
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestMessageHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost:7071/");
             _httpRequestMessageHelper.Setup(x=>x.GetResourceFromRequest<Models.Interaction>(_request)).Returns(Task.FromResult(_interaction));
 
@@ -102,6 +119,7 @@ namespace NCS.DSS.Interaction.Tests
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestMessageHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost:7071/");
             _httpRequestMessageHelper.Setup(x=>x.GetResourceFromRequest<Models.InteractionPatch>(_request)).Throws(new JsonException());
 
@@ -118,6 +136,7 @@ namespace NCS.DSS.Interaction.Tests
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestMessageHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost:7071/");
             _httpRequestMessageHelper.Setup(x=>x.GetResourceFromRequest<Models.Interaction>(_request)).Returns(Task.FromResult(_interaction));
             _resourceHelper.Setup(x=>x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(false));
@@ -135,6 +154,7 @@ namespace NCS.DSS.Interaction.Tests
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestMessageHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost:7071/");
             _httpRequestMessageHelper.Setup(x=>x.GetResourceFromRequest<Models.Interaction>(_request)).Returns(Task.FromResult(_interaction));
             _resourceHelper.Setup(x=>x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
@@ -153,6 +173,7 @@ namespace NCS.DSS.Interaction.Tests
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestMessageHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost:7071/");
             _httpRequestMessageHelper.Setup(x=>x.GetResourceFromRequest<Models.Interaction>(_request)).Returns(Task.FromResult(_interaction));
             _resourceHelper.Setup(x=>x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
@@ -171,6 +192,7 @@ namespace NCS.DSS.Interaction.Tests
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestMessageHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost:7071/");
             _httpRequestMessageHelper.Setup(x=>x.GetResourceFromRequest<Models.Interaction>(_request)).Returns(Task.FromResult(_interaction));
             _resourceHelper.Setup(x=>x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));

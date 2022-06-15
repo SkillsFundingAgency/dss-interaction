@@ -52,6 +52,22 @@ namespace NCS.DSS.Interaction.Tests
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x=>x.GetDssTouchpointId(_request)).Returns<string>(null);
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
+
+            // Act
+            var result = await RunFunction(ValidCustomerId, ValidInteractionId);
+
+            // Assert
+            Assert.IsInstanceOf<HttpResponseMessage>(result);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Test]
+        public async Task GetInteractionByIdHttpTrigger_ReturnsStatusCodeBadRequest_WhenSubcontractorIdIsNotProvided()
+        {
+            // Arrange
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns<string>(null);
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId);
@@ -77,6 +93,7 @@ namespace NCS.DSS.Interaction.Tests
         {
             // Act
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             var result = await RunFunction(ValidCustomerId, InValidId);
 
             // Assert
@@ -89,6 +106,7 @@ namespace NCS.DSS.Interaction.Tests
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _resourceHelper.Setup(x=>x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(false));
 
             // Act
@@ -104,6 +122,7 @@ namespace NCS.DSS.Interaction.Tests
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _resourceHelper.Setup(x=>x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
             _getInteractionByIdHttpTriggerService.Setup(x=>x.GetInteractionForCustomerAsync(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult<Models.Interaction>(null));
 
@@ -120,6 +139,7 @@ namespace NCS.DSS.Interaction.Tests
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x=>x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _resourceHelper.Setup(x=>x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
             _getInteractionByIdHttpTriggerService.Setup(x=>x.GetInteractionForCustomerAsync(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult<Models.Interaction>(_interaction));
 
