@@ -56,6 +56,13 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
                 return _httpResponseMessageHelper.BadRequest();
             }
 
+            var subcontractorId = _httpRequestMessageHelper.GetDssSubcontractorId(req);
+            if (string.IsNullOrEmpty(subcontractorId))
+            {
+                log.LogInformation("Unable to locate 'SubcontractorId' in request header.");
+                return _httpResponseMessageHelper.BadRequest();
+            }
+
             var ApimURL = _httpRequestMessageHelper.GetDssApimUrl(req);
             if (string.IsNullOrEmpty(ApimURL))
             {
