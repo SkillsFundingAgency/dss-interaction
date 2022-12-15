@@ -8,6 +8,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.11.1" />
     <PackageReference Include="DFC.Common.Standard" Version="0.1.4" />
     <PackageReference Include="DFC.HTTP.Standard" Version="0.1.11" />
     <PackageReference Include="DFC.JSON.Standard" Version="0.1.4" />
