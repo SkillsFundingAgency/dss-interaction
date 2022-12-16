@@ -45,7 +45,6 @@ jobs:
 - job: BuildDotNetStandard
   displayName: Build-DotNetStandard
   dependsOn: TestBranchName
-  condition: and(succeeded())
 
   steps:
   - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcorefunctionapp-build-notests.yml@dfc-devops
