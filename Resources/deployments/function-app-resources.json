@@ -52,6 +52,7 @@
         "serverFarmId": "[parameters('appServicePlanId')]",
         "siteConfig": {
           "alwaysOn": true,
+          "netFrameworkVersion":"v6.0",
           "mintlsVersion": "1.2",
           "appSettings": [
             {
@@ -60,7 +61,7 @@
             },
             {
               "name": "FUNCTIONS_EXTENSION_VERSION",
-              "value": "~3"
+              "value": "~4"
             },
             {
               "name": "MSDEPLOY_RENAME_LOCKED_FILES",
