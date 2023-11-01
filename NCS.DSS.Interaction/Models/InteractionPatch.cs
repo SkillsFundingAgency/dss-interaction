@@ -52,6 +52,7 @@ namespace NCS.DSS.Interaction.Models
         public DateTime? LastModifiedDate { get; set; }
         
         [StringLength(10, MinimumLength = 10)]
+        [RegularExpression(@"^[0-9]+$")]
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
         [Example(Description = "0000000001")]
         public string LastModifiedTouchpointId { get; set; }
