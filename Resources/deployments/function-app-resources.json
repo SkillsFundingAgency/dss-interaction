@@ -34,6 +34,9 @@
     },
     "serviceBusQueueName": {
       "type": "string"
+    },
+    "workspaceId": {
+      "type": "string"
     }
   },
   "variables": {
@@ -125,7 +128,8 @@
         "[concat('hidden-link:', resourceId('Microsoft.Web/sites', parameters('functionAppName')))]": "Resource"
       },
       "properties": {
-        "Application_Type": "web"
+        "Application_Type": "web",
+        "WorkspaceResourceId": "[parameters('workspaceId')]"
       }
     }
   ],

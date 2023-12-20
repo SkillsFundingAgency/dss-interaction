@@ -40,6 +40,12 @@
         },
         "templateBaseUrl": {
             "value": "__NestedArmTemplateBaseUrl__"
+        },
+        "workspaceName": {
+            "value": "__sharedLogAnalyticsWorkspace__"
+        },
+        "workspaceResourceGroup": {
+            "value": "__sharedLogAnalyticsResourceGroup__"
         }
     }
 }
