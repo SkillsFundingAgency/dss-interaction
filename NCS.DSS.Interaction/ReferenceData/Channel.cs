@@ -16,6 +16,8 @@ namespace NCS.DSS.Interaction.ReferenceData
         Post = 8,
         [Description("Co-browse")]
         Cobrowse = 9,
+        [Description("Messaging application e.g. WhatsApp")]
+        MessagingApplication = 10,
         Other = 99
     }
 }
