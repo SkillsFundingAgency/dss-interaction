@@ -11,7 +11,7 @@ namespace NCS.DSS.Interaction.DeleteInteractionHttpTrigger
 {
     public static class DeleteInteractionHttpTrigger
     {
-        [Disable]
+        /*[Disable]
         [Function("Delete")]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, ILogger log, string interactionId)
         {
@@ -30,6 +30,6 @@ namespace NCS.DSS.Interaction.DeleteInteractionHttpTrigger
             {
                 Content = new StringContent("Deleted Interaction record with Id of : " + interactionGuid)
             };
-        }
+        }*/
     }
 }

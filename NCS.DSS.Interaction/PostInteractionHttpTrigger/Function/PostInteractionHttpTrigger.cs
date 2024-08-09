@@ -15,6 +15,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
+using System.Text.Json;
+using NCS.DSS.Interaction.Helpers;
 
 namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 {
@@ -26,8 +28,10 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
         private IValidate _validate;
         private readonly IHttpResponseMessageHelper _httpResponseMessageHelper;
         private IJsonHelper _jsonHelper;
+        private IDynamicHelper _dynamicHelper;
+        private ILogger log;
 
-        public PostInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IPostInteractionHttpTriggerService interactionPostService, IValidate validate, IHttpResponseMessageHelper httpResponseMessageHelper, IJsonHelper jsonHelper)
+        public PostInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IPostInteractionHttpTriggerService interactionPostService, IValidate validate, IHttpResponseMessageHelper httpResponseMessageHelper, IJsonHelper jsonHelper, IDynamicHelper dynamicHelper, ILogger<PostInteractionHttpTrigger> logger)
         {
             _resourceHelper = resourceHelper;
             _httpRequestMessageHelper = httpRequestMessageHelper;
@@ -35,6 +39,8 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             _validate = validate;
             _httpResponseMessageHelper = httpResponseMessageHelper;
             _jsonHelper = jsonHelper;
+            _dynamicHelper = dynamicHelper;
+            log = logger;
         }
 
         [Function("Post")]
@@ -46,26 +52,26 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new interaction resource.")]
-        public  async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")] HttpRequest req, ILogger log, string customerId)
+        public  async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")] HttpRequest req, string customerId)
         {
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
                 log.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
-                return _httpResponseMessageHelper.BadRequest();
+                return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
             var ApimURL = _httpRequestMessageHelper.GetDssApimUrl(req);
             if (string.IsNullOrEmpty(ApimURL))
             {
                 log.LogInformation("Unable to locate 'apimurl' in request header");
-                return _httpResponseMessageHelper.BadRequest();
+                return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
             log.LogInformation("Post Interaction C# HTTP trigger function processed a request. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
-                return _httpResponseMessageHelper.BadRequest(customerGuid);
+                return new BadRequestObjectResult(customerGuid);
 
             Models.Interaction interactionRequest;
 
@@ -73,30 +79,33 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             {
                 interactionRequest = await _httpRequestMessageHelper.GetResourceFromRequest<Models.Interaction>(req);
             }
-            catch (JsonException ex)
+            catch (Exception ex)
             {
-                return _httpResponseMessageHelper.UnprocessableEntity(ex);
+                return new UnprocessableEntityObjectResult(_dynamicHelper.ExcludeProperty(ex, ["TargetSite"]));
             }
 
             if (interactionRequest == null)
-                return _httpResponseMessageHelper.UnprocessableEntity(req);
+                return new UnprocessableEntityObjectResult(req);
 
             interactionRequest.SetIds(customerGuid, touchpointId);
 
             var errors = _validate.ValidateResource(interactionRequest);
 
             if (errors != null && errors.Any())
-                return _httpResponseMessageHelper.UnprocessableEntity(errors);
+                return new UnprocessableEntityObjectResult(errors);
 
             var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
-                return _httpResponseMessageHelper.NoContent(customerGuid);
+                return new NoContentResult();
 
             var isCustomerReadOnly = await _resourceHelper.IsCustomerReadOnly(customerGuid);
 
             if (isCustomerReadOnly)
-                return _httpResponseMessageHelper.Forbidden(customerGuid);
+                return new ObjectResult(customerGuid.ToString())
+                {
+                    StatusCode = (int)HttpStatusCode.Forbidden
+                };
 
             var interaction = await _interactionPostService.CreateAsync(interactionRequest);
 
@@ -104,8 +113,11 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
                 await _interactionPostService.SendToServiceBusQueueAsync(interaction, ApimURL);
 
             return interaction == null
-                ? _httpResponseMessageHelper.BadRequest(customerGuid)
-                : _httpResponseMessageHelper.Created(_jsonHelper.SerializeObjectAndRenameIdProperty(interaction, "id", "InteractionId"));
+                ? new BadRequestObjectResult(customerGuid)
+                : new JsonResult(interaction, new JsonSerializerOptions())
+                {
+                    StatusCode = (int)HttpStatusCode.Created
+                };
         }
     }
 }

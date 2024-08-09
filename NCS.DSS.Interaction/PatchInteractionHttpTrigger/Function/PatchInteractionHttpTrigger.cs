@@ -16,6 +16,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
+using NCS.DSS.Interaction.Helpers;
+using System.Text.Json;
 
 namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 {
@@ -27,8 +29,10 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
         private IValidate _validate;
         private readonly IHttpResponseMessageHelper _httpResponseMessageHelper;
         private IJsonHelper _jsonHelper;
+        private IDynamicHelper _dynamicHelper;
+        private ILogger log;
 
-        public PatchInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IPatchInteractionHttpTriggerService interactionPatchService, IValidate validate, IHttpResponseMessageHelper httpResponseMessageHelper, IJsonHelper jsonHelper)
+        public PatchInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IPatchInteractionHttpTriggerService interactionPatchService, IValidate validate, IHttpResponseMessageHelper httpResponseMessageHelper, IJsonHelper jsonHelper, IDynamicHelper dynamicHelper, ILogger<PatchInteractionHttpTrigger> logger)
         {
             _resourceHelper = resourceHelper;
             _httpRequestMessageHelper = httpRequestMessageHelper;
@@ -36,6 +40,8 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             _validate = validate;
             _httpResponseMessageHelper = httpResponseMessageHelper;
             _jsonHelper = jsonHelper;
+            _dynamicHelper = dynamicHelper;
+            log = logger;
         }
 
         [Function("Patch")]
@@ -47,29 +53,29 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update an interaction record.")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, ILogger log, string customerId, string interactionId)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, string customerId, string interactionId)
         {
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
                 log.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
-                return _httpResponseMessageHelper.BadRequest();
+                return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
             var ApimURL = _httpRequestMessageHelper.GetDssApimUrl(req);
             if (string.IsNullOrEmpty(ApimURL))
             {
                 log.LogInformation("Unable to locate 'apimurl' in request header");
-                return _httpResponseMessageHelper.BadRequest();
+                return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
             log.LogInformation("Patch Interaction C# HTTP trigger function processed a request. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
-                return _httpResponseMessageHelper.BadRequest(customerGuid);
+                return new BadRequestObjectResult(customerGuid);
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
-                return _httpResponseMessageHelper.BadRequest(interactionGuid);
+                return new BadRequestObjectResult(interactionGuid);
 
             InteractionPatch interactionPatchRequest;
 
@@ -77,35 +83,38 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             {
                 interactionPatchRequest = await _httpRequestMessageHelper.GetResourceFromRequest<Models.InteractionPatch>(req);
             }
-            catch (JsonException ex)
+            catch (Exception ex)
             {
-                return _httpResponseMessageHelper.UnprocessableEntity(ex);
+                return new UnprocessableEntityObjectResult(_dynamicHelper.ExcludeProperty(ex, ["TargetSite"]));
             }
 
             if (interactionPatchRequest == null)
-                return _httpResponseMessageHelper.UnprocessableEntity(req);
+                return new UnprocessableEntityObjectResult(req);
 
             interactionPatchRequest.LastModifiedTouchpointId = touchpointId;
 
             var errors = _validate.ValidateResource(interactionPatchRequest);
 
             if (errors != null && errors.Any())
-                return _httpResponseMessageHelper.UnprocessableEntity(errors);
+                return new UnprocessableEntityObjectResult(errors);
 
             var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
-                return _httpResponseMessageHelper.NoContent(customerGuid);
+                return new NoContentResult();
 
             var isCustomerReadOnly = await _resourceHelper.IsCustomerReadOnly(customerGuid);
 
             if (isCustomerReadOnly)
-                return _httpResponseMessageHelper.Forbidden(customerGuid);
+                return new ObjectResult(customerGuid.ToString())
+                {
+                    StatusCode = (int)HttpStatusCode.Forbidden
+                };
 
             var interaction = await _interactionPatchService.GetInteractionForCustomerAsync(customerGuid, interactionGuid);
 
             if (interaction == null)
-                return _httpResponseMessageHelper.NoContent(interactionGuid);
+                return new NoContentResult();
 
             var updatedInteraction = await _interactionPatchService.UpdateAsync(interaction, interactionPatchRequest);
 
@@ -113,8 +122,11 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
                 await _interactionPatchService.SendToServiceBusQueueAsync(updatedInteraction, customerGuid, ApimURL);
 
             return updatedInteraction == null ?
-                _httpResponseMessageHelper.BadRequest(interactionGuid) :
-                _httpResponseMessageHelper.Ok(_jsonHelper.SerializeObjectAndRenameIdProperty(updatedInteraction, "id", "InteractionId"));
+                new BadRequestObjectResult(interactionGuid) :
+                new JsonResult(updatedInteraction, new JsonSerializerOptions())
+                {
+                    StatusCode = (int)HttpStatusCode.OK
+                };
         }
     }
 }

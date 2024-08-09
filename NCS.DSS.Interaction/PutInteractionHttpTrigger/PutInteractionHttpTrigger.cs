@@ -11,7 +11,7 @@ namespace NCS.DSS.Interaction.PutInteractionHttpTrigger
 {
     public static class PutInteractionHttpTrigger
     {
-        [Disable]
+        /*[Disable]
         [Function("Put")]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, ILogger log, string interactionId)
         {
@@ -30,6 +30,6 @@ namespace NCS.DSS.Interaction.PutInteractionHttpTrigger
             {
                 Content = new StringContent("Replaced Interaction record with Id of : " + interactionGuid)
             };
-        }
+        }*/
     }
 }

@@ -1,9 +1,11 @@
 ﻿using DFC.HTTP.Standard;
 using DFC.JSON.Standard;
-using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NCS.DSS.Interaction.Cosmos.Helper;
+using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.PostInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Validation;
 using NUnit.Framework;
@@ -22,8 +24,8 @@ namespace NCS.DSS.Interaction.Tests
     {
         private const string ValidCustomerId = "7E467BDB-213F-407A-B86A-1954053D3C24";
         private const string InValidId = "1111111-2222-3333-4444-555555555555";
-        private Mock<ILogger> _log;
-        private DefaultHttpRequest _request;
+        private Mock<ILogger<PostInteractionHttpTrigger.Function.PostInteractionHttpTrigger>> _log;
+        private HttpRequest _request;
         private Mock<IResourceHelper> _resourceHelper;
         private Mock<IValidate> _validate;
         private Mock<IHttpRequestHelper> _httpRequestMessageHelper;
@@ -32,21 +34,23 @@ namespace NCS.DSS.Interaction.Tests
         private PostInteractionHttpTrigger.Function.PostInteractionHttpTrigger _function;
         private IHttpResponseMessageHelper _httpResponseMessageHelper;
         private IJsonHelper _jsonHelper;
+        private Mock<IDynamicHelper> _dynamicHelper;
 
         [SetUp]
         public void Setup()
         {
             _interaction = new Models.Interaction();
 
-            _request = null;
-            _log = new Mock<ILogger>();
+            _request = new DefaultHttpContext().Request;
+            _log = new Mock<ILogger<PostInteractionHttpTrigger.Function.PostInteractionHttpTrigger>>();
+            _dynamicHelper = new Mock<IDynamicHelper>();
             _resourceHelper = new Mock<IResourceHelper>();
             _httpRequestMessageHelper = new Mock<IHttpRequestHelper>();
             _validate = new Mock<IValidate>();
             _postInteractionHttpTriggerService = new Mock<IPostInteractionHttpTriggerService>();
             _httpResponseMessageHelper = new HttpResponseMessageHelper();
             _jsonHelper = new JsonHelper();
-            _function = new PostInteractionHttpTrigger.Function.PostInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _postInteractionHttpTriggerService.Object, _validate.Object, _httpResponseMessageHelper, _jsonHelper);
+            _function = new PostInteractionHttpTrigger.Function.PostInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _postInteractionHttpTriggerService.Object, _validate.Object, _httpResponseMessageHelper, _jsonHelper, _dynamicHelper.Object, _log.Object);
         }
 
         [Test]
@@ -59,8 +63,7 @@ namespace NCS.DSS.Interaction.Tests
             var result = await RunFunction(ValidCustomerId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
@@ -74,8 +77,7 @@ namespace NCS.DSS.Interaction.Tests
             var result = await RunFunction(InValidId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
@@ -93,8 +95,7 @@ namespace NCS.DSS.Interaction.Tests
             var result = await RunFunction(ValidCustomerId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual((HttpStatusCode)422, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<UnprocessableEntityObjectResult>());
         }
 
         [Test]
@@ -109,8 +110,7 @@ namespace NCS.DSS.Interaction.Tests
             var result = await RunFunction(ValidCustomerId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual((HttpStatusCode)422, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<UnprocessableEntityObjectResult>());
         }
 
         [Test]
@@ -126,8 +126,7 @@ namespace NCS.DSS.Interaction.Tests
             var result = await RunFunction(ValidCustomerId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<NoContentResult>());
         }
 
         [Test]
@@ -144,8 +143,7 @@ namespace NCS.DSS.Interaction.Tests
             var result = await RunFunction(ValidCustomerId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
@@ -162,8 +160,7 @@ namespace NCS.DSS.Interaction.Tests
             var result = await RunFunction(ValidCustomerId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
@@ -178,15 +175,15 @@ namespace NCS.DSS.Interaction.Tests
 
             // Act
             var result = await RunFunction(ValidCustomerId);
-
-            // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.Created, result.StatusCode);
+            var responseResult = result as JsonResult;
+            //Assert
+            Assert.That(result, Is.InstanceOf<JsonResult>());
+            Assert.That(responseResult.StatusCode, Is.EqualTo((int)HttpStatusCode.Created));
         }
 
-        private async Task<HttpResponseMessage> RunFunction(string customerId)
+        private async Task<IActionResult> RunFunction(string customerId)
         {
-            return await _function.Run(_request, _log.Object, customerId).ConfigureAwait(false);
+            return await _function.Run(_request, customerId).ConfigureAwait(false);
         }
 
     }
