@@ -3,6 +3,8 @@ using DFC.JSON.Standard;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.GetInteractionHttpTrigger.Service;
@@ -11,7 +13,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Azure.Functions.Worker;
 
 namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
 {
@@ -33,7 +34,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
             _jsonHelper = jsonHelper;
         }
 
-        [Function("Get")]
+        [FunctionName("Get")]
         [ProducesResponseType(typeof(Models.Interaction), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interactions found", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interactions do not exist", ShowSchema = false)]
@@ -41,7 +42,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Put", Description = "Ability to return all interactions for a given customer.")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/")] HttpRequest req, ILogger log, string customerId)
+        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/")] HttpRequest req, ILogger log, string customerId)
         {
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))

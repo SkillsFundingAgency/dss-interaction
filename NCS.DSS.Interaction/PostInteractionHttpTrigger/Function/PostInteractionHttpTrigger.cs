@@ -3,6 +3,8 @@ using DFC.JSON.Standard;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.PostInteractionHttpTrigger.Service;
@@ -14,7 +16,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Azure.Functions.Worker;
 
 namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 {
@@ -37,7 +38,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             _jsonHelper = jsonHelper;
         }
 
-        [Function("Post")]
+        [FunctionName("Post")]
         [ProducesResponseType(typeof(Models.Interaction), (int)HttpStatusCode.Created)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Created, Description = "Interaction Created", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interaction does not exist", ShowSchema = false)]
@@ -46,7 +47,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new interaction resource.")]
-        public  async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")] HttpRequest req, ILogger log, string customerId)
+        public  async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")] HttpRequest req, ILogger log, string customerId)
         {
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))

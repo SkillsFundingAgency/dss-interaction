@@ -2,20 +2,20 @@ using System;
 using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc;
 
 namespace NCS.DSS.Interaction.PutInteractionHttpTrigger
 {
     public static class PutInteractionHttpTrigger
     {
         [Disable]
-        [Function("Put")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, ILogger log, string interactionId)
+        [FunctionName("Put")]
+        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, TraceWriter log, string interactionId)
         {
-            log.LogInformation("Put Interaction C# HTTP trigger function processed a request.");
+            log.Info("Put Interaction C# HTTP trigger function processed a request.");
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
             {

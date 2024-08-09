@@ -3,6 +3,8 @@ using DFC.JSON.Standard;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.Models;
@@ -15,7 +17,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Azure.Functions.Worker;
 
 namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 {
@@ -38,7 +39,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             _jsonHelper = jsonHelper;
         }
 
-        [Function("Patch")]
+        [FunctionName("Patch")]
         [ProducesResponseTypeAttribute(typeof(Models.Interaction), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interaction Updated", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interaction does not exist", ShowSchema = false)]
@@ -47,7 +48,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update an interaction record.")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, ILogger log, string customerId, string interactionId)
+        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, ILogger log, string customerId, string interactionId)
         {
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
