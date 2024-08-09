@@ -3,21 +3,19 @@ using DFC.JSON.Standard;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Cosmos.Helper;
+using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.Models;
 using NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Validation;
-using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Azure.Functions.Worker;
-using NCS.DSS.Interaction.Helpers;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 {

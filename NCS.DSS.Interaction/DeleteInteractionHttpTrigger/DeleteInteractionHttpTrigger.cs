@@ -1,12 +1,3 @@
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using System;
-using System.Net;
-using System.Net.Http;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc;
-
 namespace NCS.DSS.Interaction.DeleteInteractionHttpTrigger
 {
     public static class DeleteInteractionHttpTrigger

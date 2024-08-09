@@ -1,12 +1,3 @@
-using System;
-using System.Net;
-using System.Net.Http;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc;
-
 namespace NCS.DSS.Interaction.PutInteractionHttpTrigger
 {
     public static class PutInteractionHttpTrigger

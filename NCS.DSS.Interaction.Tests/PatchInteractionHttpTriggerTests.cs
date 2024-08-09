@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace NCS.DSS.Interaction.Tests
@@ -54,7 +53,7 @@ namespace NCS.DSS.Interaction.Tests
             _patchInteractionHttpTriggerService = new Mock<IPatchInteractionHttpTriggerService>();
             _httpResponseMessageHelper = new HttpResponseMessageHelper();
             _jsonHelper = new JsonHelper();
-            _function = new PatchInteractionHttpTrigger.Function.PatchInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _patchInteractionHttpTriggerService.Object, _validate, _httpResponseMessageHelper , _jsonHelper, _dynamicHelper.Object, _log.Object);
+            _function = new PatchInteractionHttpTrigger.Function.PatchInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _patchInteractionHttpTriggerService.Object, _validate, _httpResponseMessageHelper, _jsonHelper, _dynamicHelper.Object, _log.Object);
         }
 
         [Test]

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using NCS.DSS.Interaction.Cosmos.Provider;
+using System;
 using System.Threading.Tasks;
-using NCS.DSS.Interaction.Cosmos.Provider;
 
-namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Service 
+namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Service
 {
     public class GetInteractionByIdHttpTriggerService : IGetInteractionByIdHttpTriggerService
     {

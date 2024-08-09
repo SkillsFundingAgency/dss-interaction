@@ -38,8 +38,8 @@ namespace NCS.DSS.Interaction.Tests.ValidationTests
         {
             var interaction = new Models.Interaction
             {
-                Channel = ReferenceData.Channel.Telephone, 
-                InteractionType = ReferenceData.InteractionType.WebChat, 
+                Channel = ReferenceData.Channel.Telephone,
+                InteractionType = ReferenceData.InteractionType.WebChat,
                 LastModifiedTouchpointId = "000000000A"
             };
 
