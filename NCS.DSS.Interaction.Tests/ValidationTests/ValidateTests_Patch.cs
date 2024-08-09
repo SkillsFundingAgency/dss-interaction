@@ -27,8 +27,8 @@ namespace NCS.DSS.Interaction.Tests.ValidationTests
 
             var result = _validate.ValidateResource(interaction);
 
-            Assert.IsInstanceOf<List<ValidationResult>>(result);
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.InstanceOf<List<ValidationResult>>());
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Count.Equals(0));
         }
 
@@ -42,8 +42,8 @@ namespace NCS.DSS.Interaction.Tests.ValidationTests
 
             var result = _validate.ValidateResource(interaction);
 
-            Assert.IsInstanceOf<List<ValidationResult>>(result);
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.InstanceOf<List<ValidationResult>>());
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Count.Equals(1));
         }
     }

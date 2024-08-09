@@ -1,5 +1,5 @@
-﻿using System;
-using NCS.DSS.Interaction.ReferenceData;
+﻿using NCS.DSS.Interaction.ReferenceData;
+using System;
 
 namespace NCS.DSS.Interaction.Models
 {
@@ -13,6 +13,6 @@ namespace NCS.DSS.Interaction.Models
         string LastModifiedTouchpointId { get; set; }
 
         void SetDefaultValues();
-        
+
     }
 }

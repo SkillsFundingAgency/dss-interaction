@@ -1,9 +1,9 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
-using NCS.DSS.Interaction.Cosmos.Provider;
+﻿using NCS.DSS.Interaction.Cosmos.Provider;
 using NCS.DSS.Interaction.Models;
 using NCS.DSS.Interaction.ServiceBus;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service
 {
