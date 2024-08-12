@@ -1,5 +1,4 @@
 ﻿using NCS.DSS.Interaction.ReferenceData;
-using System;
 
 namespace NCS.DSS.Interaction.Models
 {

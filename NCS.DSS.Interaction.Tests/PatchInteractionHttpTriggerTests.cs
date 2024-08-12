@@ -1,5 +1,4 @@
 ﻿using DFC.HTTP.Standard;
-using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -33,8 +32,6 @@ namespace NCS.DSS.Interaction.Tests
         private Models.Interaction _interaction;
         private Models.InteractionPatch _interactionPatch;
         private PatchInteractionHttpTrigger.Function.PatchInteractionHttpTrigger _function;
-        private IHttpResponseMessageHelper _httpResponseMessageHelper;
-        private IJsonHelper _jsonHelper;
         private Mock<IDynamicHelper> _dynamicHelper;
 
         [SetUp]
@@ -51,9 +48,7 @@ namespace NCS.DSS.Interaction.Tests
             _validate = new Validate();
             _httpRequestMessageHelper = new Mock<IHttpRequestHelper>();
             _patchInteractionHttpTriggerService = new Mock<IPatchInteractionHttpTriggerService>();
-            _httpResponseMessageHelper = new HttpResponseMessageHelper();
-            _jsonHelper = new JsonHelper();
-            _function = new PatchInteractionHttpTrigger.Function.PatchInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _patchInteractionHttpTriggerService.Object, _validate, _httpResponseMessageHelper, _jsonHelper, _dynamicHelper.Object, _log.Object);
+            _function = new PatchInteractionHttpTrigger.Function.PatchInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _patchInteractionHttpTriggerService.Object, _validate, _dynamicHelper.Object, _log.Object);
         }
 
         [Test]
@@ -90,7 +85,7 @@ namespace NCS.DSS.Interaction.Tests
             var validate = new Mock<IValidate>();
             var validationResults = new List<ValidationResult> { new ValidationResult("interaction Id is Required") };
             validate.Setup(x => x.ValidateResource(It.IsAny<Models.InteractionPatch>())).Returns(validationResults);
-            _function = new PatchInteractionHttpTrigger.Function.PatchInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _patchInteractionHttpTriggerService.Object, validate.Object, _httpResponseMessageHelper, _jsonHelper, _dynamicHelper.Object, _log.Object);
+            _function = new PatchInteractionHttpTrigger.Function.PatchInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _patchInteractionHttpTriggerService.Object, validate.Object, _dynamicHelper.Object, _log.Object);
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
             _httpRequestMessageHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost:7071/");
             _httpRequestMessageHelper.Setup(x => x.GetResourceFromRequest<Models.InteractionPatch>(_request)).Returns(Task.FromResult(_interactionPatch));

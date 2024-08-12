@@ -1,6 +1,5 @@
 ﻿using DFC.Swagger.Standard.Annotations;
 using NCS.DSS.Interaction.ReferenceData;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace NCS.DSS.Interaction.Models

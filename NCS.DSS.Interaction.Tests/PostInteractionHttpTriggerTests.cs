@@ -1,5 +1,4 @@
 ﻿using DFC.HTTP.Standard;
-using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,8 +30,6 @@ namespace NCS.DSS.Interaction.Tests
         private Mock<IPostInteractionHttpTriggerService> _postInteractionHttpTriggerService;
         private Models.Interaction _interaction;
         private PostInteractionHttpTrigger.Function.PostInteractionHttpTrigger _function;
-        private IHttpResponseMessageHelper _httpResponseMessageHelper;
-        private IJsonHelper _jsonHelper;
         private Mock<IDynamicHelper> _dynamicHelper;
 
         [SetUp]
@@ -47,9 +44,7 @@ namespace NCS.DSS.Interaction.Tests
             _httpRequestMessageHelper = new Mock<IHttpRequestHelper>();
             _validate = new Mock<IValidate>();
             _postInteractionHttpTriggerService = new Mock<IPostInteractionHttpTriggerService>();
-            _httpResponseMessageHelper = new HttpResponseMessageHelper();
-            _jsonHelper = new JsonHelper();
-            _function = new PostInteractionHttpTrigger.Function.PostInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _postInteractionHttpTriggerService.Object, _validate.Object, _httpResponseMessageHelper, _jsonHelper, _dynamicHelper.Object, _log.Object);
+            _function = new PostInteractionHttpTrigger.Function.PostInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _postInteractionHttpTriggerService.Object, _validate.Object, _dynamicHelper.Object, _log.Object);
         }
 
         [Test]

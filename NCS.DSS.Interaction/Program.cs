@@ -1,5 +1,4 @@
 using DFC.HTTP.Standard;
-using DFC.JSON.Standard;
 using DFC.Swagger.Standard;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,8 +21,6 @@ var host = new HostBuilder()
         services.AddTransient<IPostInteractionHttpTriggerService, PostInteractionHttpTriggerService>();
         services.AddTransient<IResourceHelper, ResourceHelper>();
         services.AddTransient<IValidate, Validate>();
-        services.AddTransient<IJsonHelper, JsonHelper>();
-        services.AddTransient<IHttpResponseMessageHelper, HttpResponseMessageHelper>();
         services.AddTransient<IHttpRequestHelper, HttpRequestHelper>();
         services.AddSingleton<IDynamicHelper, DynamicHelper>();
     })

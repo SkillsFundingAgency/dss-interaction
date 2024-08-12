@@ -1,5 +1,4 @@
 ﻿using DFC.HTTP.Standard;
-using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -25,8 +24,6 @@ namespace NCS.DSS.Interaction.Tests
         private Mock<IHttpRequestHelper> _httpRequestMessageHelper;
         private Mock<IGetInteractionHttpTriggerService> _getInteractionHttpTriggerService;
         private GetInteractionHttpTrigger.Function.GetInteractionHttpTrigger _function;
-        private IHttpResponseMessageHelper _httpResponseMessageHelper;
-        private IJsonHelper _jsonHelper;
 
         [SetUp]
         public void Setup()
@@ -37,10 +34,8 @@ namespace NCS.DSS.Interaction.Tests
             _resourceHelper = new Mock<IResourceHelper>();
             _httpRequestMessageHelper = new Mock<IHttpRequestHelper>();
             _getInteractionHttpTriggerService = new Mock<IGetInteractionHttpTriggerService>();
-            _httpResponseMessageHelper = new HttpResponseMessageHelper();
-            _jsonHelper = new JsonHelper();
 
-            _function = new GetInteractionHttpTrigger.Function.GetInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _getInteractionHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _log.Object);
+            _function = new GetInteractionHttpTrigger.Function.GetInteractionHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _getInteractionHttpTriggerService.Object, _log.Object);
         }
 
         [Test]

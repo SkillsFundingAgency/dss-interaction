@@ -1,5 +1,4 @@
 using DFC.HTTP.Standard;
-using DFC.JSON.Standard;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,30 +6,24 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Service;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
 {
     public class GetInteractionByIdHttpTrigger
     {
         private IResourceHelper _resourceHelper;
-        private readonly IHttpResponseMessageHelper _httpResponseMessageHelper;
         private IGetInteractionByIdHttpTriggerService _interactionGetService;
-        private IJsonHelper _jsonHelper;
         private IHttpRequestHelper _httpRequestMessageHelper;
         private ILogger log;
 
-        public GetInteractionByIdHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IGetInteractionByIdHttpTriggerService interactionGetService, IHttpResponseMessageHelper httpResponseMessageHelper, IJsonHelper jsonHelper, ILogger<GetInteractionByIdHttpTrigger> logger)
+        public GetInteractionByIdHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IGetInteractionByIdHttpTriggerService interactionGetService, ILogger<GetInteractionByIdHttpTrigger> logger)
         {
             _resourceHelper = resourceHelper;
             _httpRequestMessageHelper = httpRequestMessageHelper;
             _interactionGetService = interactionGetService;
-            _httpResponseMessageHelper = httpResponseMessageHelper;
-            _jsonHelper = jsonHelper;
             log = logger;
         }
 

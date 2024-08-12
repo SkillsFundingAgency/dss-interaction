@@ -1,5 +1,4 @@
 using DFC.HTTP.Standard;
-using DFC.JSON.Standard;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +8,9 @@ using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.PostInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.Validation;
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 {
@@ -24,19 +20,15 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
         private IHttpRequestHelper _httpRequestMessageHelper;
         private IPostInteractionHttpTriggerService _interactionPostService;
         private IValidate _validate;
-        private readonly IHttpResponseMessageHelper _httpResponseMessageHelper;
-        private IJsonHelper _jsonHelper;
         private IDynamicHelper _dynamicHelper;
         private ILogger log;
 
-        public PostInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IPostInteractionHttpTriggerService interactionPostService, IValidate validate, IHttpResponseMessageHelper httpResponseMessageHelper, IJsonHelper jsonHelper, IDynamicHelper dynamicHelper, ILogger<PostInteractionHttpTrigger> logger)
+        public PostInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IPostInteractionHttpTriggerService interactionPostService, IValidate validate, IDynamicHelper dynamicHelper, ILogger<PostInteractionHttpTrigger> logger)
         {
             _resourceHelper = resourceHelper;
             _httpRequestMessageHelper = httpRequestMessageHelper;
             _interactionPostService = interactionPostService;
             _validate = validate;
-            _httpResponseMessageHelper = httpResponseMessageHelper;
-            _jsonHelper = jsonHelper;
             _dynamicHelper = dynamicHelper;
             log = logger;
         }
