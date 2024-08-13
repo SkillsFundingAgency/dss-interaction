@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using DFC.Swagger.Standard.Annotations;
+﻿using DFC.Swagger.Standard.Annotations;
 using NCS.DSS.Interaction.ReferenceData;
+using System.ComponentModel.DataAnnotations;
 
 namespace NCS.DSS.Interaction.Models
 {
@@ -50,7 +49,7 @@ namespace NCS.DSS.Interaction.Models
         [Display(Description = "Date and time of the last modification to the record.")]
         [Example(Description = "2018-06-22T16:52:10")]
         public DateTime? LastModifiedDate { get; set; }
-        
+
         [StringLength(10, MinimumLength = 10)]
         [RegularExpression(@"^[0-9]+$")]
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
