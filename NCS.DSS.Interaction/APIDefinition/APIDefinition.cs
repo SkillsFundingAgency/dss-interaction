@@ -1,9 +1,7 @@
 ﻿using DFC.Swagger.Standard;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using System.Net;
-using System.Net.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using System.Reflection;
 
 namespace NCS.DSS.Interaction.APIDefinition
@@ -22,19 +20,16 @@ namespace NCS.DSS.Interaction.APIDefinition
             this.swaggerDocumentGenerator = swaggerDocumentGenerator;
         }
 
-        [FunctionName(APIDefinitionName)]
-        public HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = APIDefRoute)] HttpRequest req)
+        [Function(APIDefinitionName)]
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = APIDefRoute)] HttpRequest req)
         {
             var swagger = swaggerDocumentGenerator.GenerateSwaggerDocument(req, APITitle, APIDescription,
                 APIDefinitionName, ApiVersion, Assembly.GetExecutingAssembly());
 
             if (string.IsNullOrEmpty(swagger))
-                return new HttpResponseMessage(HttpStatusCode.NoContent);
+                return new NoContentResult();
 
-            return new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(swagger)
-            };
+            return new OkObjectResult(swagger);
         }
     }
 }

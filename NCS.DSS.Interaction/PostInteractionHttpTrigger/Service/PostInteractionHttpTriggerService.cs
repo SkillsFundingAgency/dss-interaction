@@ -1,8 +1,6 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
-using NCS.DSS.Interaction.Cosmos.Provider;
+﻿using NCS.DSS.Interaction.Cosmos.Provider;
 using NCS.DSS.Interaction.ServiceBus;
+using System.Net;
 
 namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Service
 {
@@ -19,7 +17,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Service
 
             var response = await documentDbProvider.CreateInteractionAsync(interaction);
 
-            return response.StatusCode == HttpStatusCode.Created ? (dynamic) response.Resource : null;
+            return response.StatusCode == HttpStatusCode.Created ? (dynamic)response.Resource : null;
         }
 
         public async Task SendToServiceBusQueueAsync(Models.Interaction interaction, string reqUrl)

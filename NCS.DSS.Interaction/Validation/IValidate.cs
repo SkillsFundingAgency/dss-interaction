@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NCS.DSS.Interaction.Models;
 using System.ComponentModel.DataAnnotations;
-using NCS.DSS.Interaction.Models;
 
 namespace NCS.DSS.Interaction.Validation
 {

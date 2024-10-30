@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using DFC.Swagger.Standard.Annotations;
+﻿using DFC.Swagger.Standard.Annotations;
 using NCS.DSS.Interaction.ReferenceData;
+using System.ComponentModel.DataAnnotations;
 
 namespace NCS.DSS.Interaction.Models
 {
@@ -40,7 +39,7 @@ namespace NCS.DSS.Interaction.Models
                                 "6 - Social media,  " +
                                 "7 - SMS,  " +
                                 "8 - Post,  " +
-                                "9 - Co - browse,  "  + 
+                                "9 - Co - browse,  " +
                                 "99 - Other")]
         [Example(Description = "1")]
         public Channel? Channel { get; set; }
@@ -56,16 +55,16 @@ namespace NCS.DSS.Interaction.Models
                                 "7 - Request for technical help,   " +
                                 "8 - Provides feedback,   " +
                                 "9 - Complaint,   " +
-                                "10 - Voice of customer survey,   " + 
+                                "10 - Voice of customer survey,   " +
                                 "99 - Other ")]
         [Example(Description = "2")]
         public InteractionType? InteractionType { get; set; }
-        
+
         [DataType(DataType.DateTime)]
         [Display(Description = "Date and time of the last modification to the record.")]
         [Example(Description = "2018-06-22T16:52:10")]
         public DateTime? LastModifiedDate { get; set; }
-        
+
         [StringLength(10, MinimumLength = 10)]
         [RegularExpression(@"^[0-9]+$")]
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
@@ -98,7 +97,7 @@ namespace NCS.DSS.Interaction.Models
             if (interactionPatch.DateandTimeOfInteraction.HasValue)
                 DateandTimeOfInteraction = interactionPatch.DateandTimeOfInteraction;
 
-            if(interactionPatch.Channel.HasValue)
+            if (interactionPatch.Channel.HasValue)
                 Channel = interactionPatch.Channel.Value;
 
             if (interactionPatch.InteractionType.HasValue)

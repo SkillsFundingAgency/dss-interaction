@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using NCS.DSS.Interaction.Cosmos.Provider;
+﻿using NCS.DSS.Interaction.Cosmos.Provider;
 
 namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Service
 {
@@ -13,7 +9,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Service
             var documentDbProvider = new DocumentDBProvider();
             var interactions = await documentDbProvider.GetInteractionsForCustomerAsync(customerId);
 
-            return  interactions;
+            return interactions;
         }
     }
 }

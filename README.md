@@ -1,7 +1,7 @@
 # DSS Interaction
 
 > [!NOTE]  
-> The latest version of this API is `v1`
+> The latest version of this API is `v2`
 
 [![Build Status](https://sfa-gov-uk.visualstudio.com/CDS%202.0/_apis/build/status/Yaml/dss-interaction?repoName=SkillsFundingAgency%2Fdss-interaction&branchName=master)](https://sfa-gov-uk.visualstudio.com/CDS%202.0/_build/latest?definitionId=1464&repoName=SkillsFundingAgency%2Fdss-interaction&branchName=master)
 

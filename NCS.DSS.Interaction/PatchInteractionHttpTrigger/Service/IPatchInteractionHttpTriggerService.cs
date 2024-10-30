@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service
+﻿namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service
 {
     public interface IPatchInteractionHttpTriggerService
     {
