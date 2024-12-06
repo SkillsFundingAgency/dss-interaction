@@ -14,17 +14,17 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
 {
     public class GetInteractionByIdHttpTrigger
     {
-        private IResourceHelper _resourceHelper;
-        private IGetInteractionByIdHttpTriggerService _interactionGetService;
-        private IHttpRequestHelper _httpRequestMessageHelper;
-        private ILogger log;
+        private readonly IResourceHelper _resourceHelper;
+        private readonly IGetInteractionByIdHttpTriggerService _interactionGetService;
+        private readonly IHttpRequestHelper _httpRequestMessageHelper;
+        private readonly ILogger<GetInteractionByIdHttpTrigger> _logger;
 
         public GetInteractionByIdHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IGetInteractionByIdHttpTriggerService interactionGetService, ILogger<GetInteractionByIdHttpTrigger> logger)
         {
             _resourceHelper = resourceHelper;
             _httpRequestMessageHelper = httpRequestMessageHelper;
             _interactionGetService = interactionGetService;
-            log = logger;
+            _logger = logger;
         }
 
 
@@ -41,11 +41,11 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
-                log.LogInformation("Unable to locate 'TouchpointId' in request header.");
+                _logger.LogInformation("Unable to locate 'TouchpointId' in request header.");
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
-            log.LogInformation("Get Interaction By Id C# HTTP trigger function  processed a request. By Touchpoint. " + touchpointId);
+            _logger.LogInformation("Get Interaction By Id C# HTTP trigger function  processed a request. By Touchpoint. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return new BadRequestObjectResult(customerGuid);

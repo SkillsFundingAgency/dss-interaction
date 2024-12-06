@@ -16,12 +16,12 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 {
     public class PostInteractionHttpTrigger
     {
-        private IResourceHelper _resourceHelper;
-        private IHttpRequestHelper _httpRequestMessageHelper;
-        private IPostInteractionHttpTriggerService _interactionPostService;
-        private IValidate _validate;
-        private IDynamicHelper _dynamicHelper;
-        private ILogger log;
+        private readonly IResourceHelper _resourceHelper;
+        private readonly IHttpRequestHelper _httpRequestMessageHelper;
+        private readonly IPostInteractionHttpTriggerService _interactionPostService;
+        private readonly IValidate _validate;
+        private readonly IDynamicHelper _dynamicHelper;
+        private readonly ILogger<PostInteractionHttpTrigger> _logger;
 
         public PostInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IPostInteractionHttpTriggerService interactionPostService, IValidate validate, IDynamicHelper dynamicHelper, ILogger<PostInteractionHttpTrigger> logger)
         {
@@ -30,7 +30,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             _interactionPostService = interactionPostService;
             _validate = validate;
             _dynamicHelper = dynamicHelper;
-            log = logger;
+            _logger = logger;
         }
 
         [Function("Post")]
@@ -47,18 +47,18 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
-                log.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
+                _logger.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
             var ApimURL = _httpRequestMessageHelper.GetDssApimUrl(req);
             if (string.IsNullOrEmpty(ApimURL))
             {
-                log.LogInformation("Unable to locate 'apimurl' in request header");
+                _logger.LogInformation("Unable to locate 'apimurl' in request header");
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
-            log.LogInformation("Post Interaction C# HTTP trigger function processed a request. " + touchpointId);
+            _logger.LogInformation("Post Interaction C# HTTP trigger function processed a request. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return new BadRequestObjectResult(customerGuid);

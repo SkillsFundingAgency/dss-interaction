@@ -15,17 +15,17 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
     public class GetInteractionHttpTrigger
     {
 
-        private IResourceHelper _resourceHelper;
-        private IHttpRequestHelper _httpRequestMessageHelper;
-        private IGetInteractionHttpTriggerService _interactionGetService;
-        private ILogger log;
+        private readonly IResourceHelper _resourceHelper;
+        private readonly IHttpRequestHelper _httpRequestMessageHelper;
+        private readonly IGetInteractionHttpTriggerService _interactionGetService;
+        private readonly ILogger<GetInteractionHttpTrigger> _logger;
 
-        public GetInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IGetInteractionHttpTriggerService interactionGetService, ILogger<GetInteractionHttpTrigger> log)
+        public GetInteractionHttpTrigger(IResourceHelper resourceHelper, IHttpRequestHelper httpRequestMessageHelper, IGetInteractionHttpTriggerService interactionGetService, ILogger<GetInteractionHttpTrigger> logger)
         {
             _resourceHelper = resourceHelper;
             _httpRequestMessageHelper = httpRequestMessageHelper;
             _interactionGetService = interactionGetService;
-            this.log = log;
+            _logger = logger;
         }
 
         [Function("Get")]
@@ -41,11 +41,11 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
-                log.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
+                _logger.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
-            log.LogInformation("Get Interaction C# HTTP trigger function  processed a request. By Touchpoint. " + touchpointId);
+            _logger.LogInformation("Get Interaction C# HTTP trigger function  processed a request. By Touchpoint. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return new BadRequestObjectResult(customerGuid);
