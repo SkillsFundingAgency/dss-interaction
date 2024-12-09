@@ -4,18 +4,22 @@ namespace NCS.DSS.Interaction.Cosmos.Helper
 {
     public class ResourceHelper : IResourceHelper
     {
+        private readonly ICosmosDbProvider _cosmosDbProvider;
+
+        public ResourceHelper(ICosmosDbProvider documentDbProvider)
+        {
+            _cosmosDbProvider = documentDbProvider;
+        }
         public async Task<bool> DoesCustomerExist(Guid customerId)
         {
-            var documentDbProvider = new DocumentDBProvider();
-            var doesCustomerExist = await documentDbProvider.DoesCustomerResourceExist(customerId);
+            var doesCustomerExist = await _cosmosDbProvider.DoesCustomerResourceExist(customerId);
 
             return doesCustomerExist;
         }
 
         public async Task<bool> IsCustomerReadOnly(Guid customerId)
         {
-            var documentDbProvider = new DocumentDBProvider();
-            var isCustomerReadOnly = await documentDbProvider.DoesCustomerHaveATerminationDate(customerId);
+            var isCustomerReadOnly = await _cosmosDbProvider.DoesCustomerHaveATerminationDate(customerId);
 
             return isCustomerReadOnly;
         }
