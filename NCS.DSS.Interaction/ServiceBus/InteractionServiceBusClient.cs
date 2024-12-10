@@ -13,9 +13,6 @@ namespace NCS.DSS.Interaction.ServiceBus
         private readonly ILogger<InteractionServiceBusClient> _logger;
         private readonly string _queueName;
 
-        public static readonly string QueueName = Environment.GetEnvironmentVariable("QueueName");
-
-
         public InteractionServiceBusClient(ServiceBusClient serviceBusClient,
             IOptions<InteractionConfigurationSettings> configOptions,
             ILogger<InteractionServiceBusClient> logger)

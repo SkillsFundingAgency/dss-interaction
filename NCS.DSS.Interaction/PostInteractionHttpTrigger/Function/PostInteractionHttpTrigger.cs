@@ -44,10 +44,12 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
         [Display(Name = "Post", Description = "Ability to create a new interaction resource.")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")] HttpRequest req, string customerId)
         {
+            _logger.LogInformation("Function {FunctionName} has been invoked", nameof(PostInteractionHttpTrigger));
+
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
-                _logger.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
+                _logger.LogInformation("Unable to locate 'TouchpointId' in request header.");
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
@@ -61,53 +63,86 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             _logger.LogInformation("Post Interaction C# HTTP trigger function processed a request. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
+            {
+                _logger.LogWarning("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
                 return new BadRequestObjectResult(customerGuid);
+            }
 
+            _logger.LogInformation("Attempting to retrieve resource from request.");
             Models.Interaction interactionRequest;
-
             try
             {
                 interactionRequest = await _httpRequestMessageHelper.GetResourceFromRequest<Models.Interaction>(req);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unable to parse {interactionRequest} from request body. Exception: {ExceptionMessage}", nameof(interactionRequest), ex.Message);
                 return new UnprocessableEntityObjectResult(_dynamicHelper.ExcludeProperty(ex, ["TargetSite"]));
             }
 
             if (interactionRequest == null)
+            {
+                _logger.LogWarning("{interactionRequest} object is NULL.", nameof(interactionRequest));
                 return new UnprocessableEntityObjectResult(req);
+            }
 
             interactionRequest.SetIds(customerGuid, touchpointId);
 
+            _logger.LogInformation("Attempting to validate {interactionRequest} object", nameof(interactionRequest));
             var errors = _validate.ValidateResource(interactionRequest);
-
             if (errors != null && errors.Any())
+            {
+                _logger.LogWarning("Falied to validate {interactionRequest} object", nameof(interactionRequest));
                 return new UnprocessableEntityObjectResult(errors);
+            }
+            _logger.LogInformation("Successfully validated {interactionRequest} object", nameof(interactionRequest));
 
+            _logger.LogInformation("Checking if customer exists. Customer ID: {CustomerId}.", customerGuid);
             var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
+            {
+                _logger.LogWarning("Customer not found. Customer ID: {CustomerId}.", customerGuid);
                 return new NoContentResult();
+            }
 
+            _logger.LogInformation("Customer exists. Customer GUID: {CustomerGuid}.", customerGuid);
+
+            _logger.LogInformation("Check if customer is read-only. Customer GUID: {CustomerId}.", customerGuid);
             var isCustomerReadOnly = await _resourceHelper.IsCustomerReadOnly(customerGuid);
-
             if (isCustomerReadOnly)
+            {
+                _logger.LogWarning("Customer is read-only. Customer GUID: {CustomerId}.", customerGuid);
                 return new ObjectResult(customerGuid.ToString())
                 {
                     StatusCode = (int)HttpStatusCode.Forbidden
                 };
+            }
 
+            _logger.LogInformation("Attempting to POST Interaction in Cosmos DB. Interaction GUID: {InteractionGuid}", interactionRequest.InteractionId);
             var interaction = await _interactionPostService.CreateAsync(interactionRequest);
 
             if (interaction != null)
+            {
+                _logger.LogInformation("Successfully POSTed Interaction in Cosmos DB. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
+                _logger.LogInformation("Attempting to send message to Service Bus Namespace. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
                 await _interactionPostService.SendToServiceBusQueueAsync(interaction, ApimURL);
+                _logger.LogInformation("Successfully sent message to Service Bus. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
+            }
 
-            return interaction == null
-                ? new BadRequestObjectResult(customerGuid)
-                : new JsonResult(interaction, new JsonSerializerOptions())
-                {
-                    StatusCode = (int)HttpStatusCode.Created
-                };
+            if (interaction == null)
+            {
+                _logger.LogWarning("POST request unsuccessful. Interaction GUID: {InteractionGuid}", interactionRequest.InteractionId);
+                _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(PostInteractionHttpTrigger));
+                return new BadRequestObjectResult(interactionRequest.InteractionId);
+            }
+
+            _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(PostInteractionHttpTrigger));
+
+            return new JsonResult(interaction, new JsonSerializerOptions())
+            {
+                StatusCode = (int)HttpStatusCode.Created
+            };
         }
     }
 }

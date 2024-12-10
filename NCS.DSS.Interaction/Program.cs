@@ -15,6 +15,7 @@ using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.Models;
 using NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.PostInteractionHttpTrigger.Service;
+using NCS.DSS.Interaction.ServiceBus;
 using NCS.DSS.Interaction.Validation;
 
 namespace NCS.DSS.Outcomes
@@ -45,6 +46,7 @@ namespace NCS.DSS.Outcomes
                     services.AddTransient<IHttpRequestHelper, HttpRequestHelper>();
                     services.AddSingleton<IDynamicHelper, DynamicHelper>();
                     services.AddSingleton<ICosmosDbProvider, CosmosDbProvider>();
+                    services.AddSingleton<IInteractionServiceBusClient, InteractionServiceBusClient>();
 
                     services.AddSingleton(s =>
                     {

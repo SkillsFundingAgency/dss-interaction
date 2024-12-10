@@ -38,6 +38,8 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
         [Display(Name = "Get", Description = "Ability to retrieve an individual interaction record.")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, string customerId, string interactionId)
         {
+            _logger.LogInformation("Function {FunctionName} has been invoked", nameof(GetInteractionByIdHttpTrigger));
+
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
@@ -45,27 +47,45 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
-            _logger.LogInformation("Get Interaction By Id C# HTTP trigger function  processed a request. By Touchpoint. " + touchpointId);
-
             if (!Guid.TryParse(customerId, out var customerGuid))
+            {
+                _logger.LogWarning("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
                 return new BadRequestObjectResult(customerGuid);
+            }
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
+            {
+                _logger.LogWarning("Unable to parse 'interactionId' to a GUID. Interaction ID: {InteractionId}", interactionId);
                 return new BadRequestObjectResult(interactionGuid);
+            }
 
+            _logger.LogInformation("Checking if customer exists. Customer ID: {CustomerId}.", customerGuid);
             var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
+            {
+                _logger.LogWarning("Customer not found. Customer ID: {CustomerId}.", customerGuid);
                 return new NoContentResult();
+            }
 
+            _logger.LogInformation("Customer exists. Customer GUID: {CustomerGuid}.", customerGuid);
+
+            _logger.LogInformation("Retrieving interaction for Customer ID: {CustomerId}, Interaction ID: {InteractionId}.", customerGuid, interactionGuid);
             var interaction = await _interactionGetService.GetInteractionForCustomerAsync(customerGuid, interactionGuid);
 
-            return interaction == null ?
-                new NoContentResult() :
-                new JsonResult(interaction, new JsonSerializerOptions())
-                {
-                    StatusCode = (int)HttpStatusCode.OK
-                };
+            if (interaction == null)
+            {
+                _logger.LogWarning("Interaction not found for Customer ID: {CustomerId}, Interaction ID: {InteractionId}.", customerGuid, interactionGuid);
+                _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(GetInteractionByIdHttpTrigger));
+                return new NoContentResult();
+            }
+
+            _logger.LogInformation("Interaction successfully retrieved for Customer With ID {CustomerGuid}. Interaction GUID: {InteractionGuid}", customerGuid, interactionGuid);
+            _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(GetInteractionByIdHttpTrigger));
+            return new JsonResult(interaction, new JsonSerializerOptions())
+            {
+                StatusCode = (int)HttpStatusCode.OK
+            };
         }
     }
 }
