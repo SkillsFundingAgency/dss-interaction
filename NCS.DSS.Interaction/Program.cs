@@ -18,7 +18,7 @@ using NCS.DSS.Interaction.PostInteractionHttpTrigger.Service;
 using NCS.DSS.Interaction.ServiceBus;
 using NCS.DSS.Interaction.Validation;
 
-namespace NCS.DSS.Outcomes
+namespace NCS.DSS.Interaction
 {
     internal class Program
     {
