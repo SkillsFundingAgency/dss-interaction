@@ -60,7 +60,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
-            _logger.LogInformation("Post Interaction C# HTTP trigger function processed a request. " + touchpointId);
+            _logger.LogInformation("Header validation has succeeded. Touchpoint ID: {TouchpointId}.", touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
@@ -96,6 +96,8 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
                 return new UnprocessableEntityObjectResult(errors);
             }
             _logger.LogInformation("Successfully validated {interactionRequest} object", nameof(interactionRequest));
+
+            _logger.LogInformation("Input validation has succeeded. Touchpoint ID: {TouchpointId}.", touchpointId);
 
             _logger.LogInformation("Checking if customer exists. Customer ID: {CustomerId}.", customerGuid);
             var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);

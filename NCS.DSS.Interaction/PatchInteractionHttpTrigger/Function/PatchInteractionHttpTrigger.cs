@@ -61,7 +61,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
-            _logger.LogInformation("Patch Interaction C# HTTP trigger function processed a request. " + touchpointId);
+            _logger.LogInformation("Header validation has succeeded. Touchpoint ID: {TouchpointId}.", touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
@@ -100,11 +100,12 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 
             if (errors != null && errors.Any())
             {
-                _logger.LogWarning("Falied to validate {outcomeValidationObject} object", nameof(interactionPatchRequest));
+                _logger.LogWarning("Falied to validate {interactionPatchRequest} object", nameof(interactionPatchRequest));
                 return new UnprocessableEntityObjectResult(errors);
             }
-            _logger.LogInformation("Successfully validated {outcomeValidationObject} object", nameof(interactionPatchRequest));
+            _logger.LogInformation("Successfully validated {interactionPatchRequest} object", nameof(interactionPatchRequest));
 
+            _logger.LogInformation("Input validation has succeeded. Touchpoint ID: {TouchpointId}.", touchpointId);
 
             _logger.LogInformation("Checking if customer exists. Customer ID: {CustomerId}.", customerGuid);
             var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);

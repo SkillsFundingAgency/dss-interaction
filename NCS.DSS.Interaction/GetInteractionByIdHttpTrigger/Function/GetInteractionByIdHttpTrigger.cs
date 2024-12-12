@@ -59,6 +59,8 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
                 return new BadRequestObjectResult(interactionGuid);
             }
 
+            _logger.LogInformation("Header validation has succeeded. Touchpoint ID: {TouchpointId}", touchpointId);
+
             _logger.LogInformation("Checking if customer exists. Customer ID: {CustomerId}.", customerGuid);
             var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);
 

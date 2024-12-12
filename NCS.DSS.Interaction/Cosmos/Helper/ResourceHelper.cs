@@ -6,9 +6,9 @@ namespace NCS.DSS.Interaction.Cosmos.Helper
     {
         private readonly ICosmosDbProvider _cosmosDbProvider;
 
-        public ResourceHelper(ICosmosDbProvider documentDbProvider)
+        public ResourceHelper(ICosmosDbProvider cosmosDbProvider)
         {
-            _cosmosDbProvider = documentDbProvider;
+            _cosmosDbProvider = cosmosDbProvider;
         }
         public async Task<bool> DoesCustomerExist(Guid customerId)
         {
