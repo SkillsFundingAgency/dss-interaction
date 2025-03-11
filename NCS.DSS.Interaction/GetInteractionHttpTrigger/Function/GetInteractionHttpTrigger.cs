@@ -31,10 +31,10 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
         [Function("Get")]
         [ProducesResponseType(typeof(Models.Interaction), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interactions found", ShowSchema = true)]
-        [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interactions do not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.NotFound, Description = "Interactions do not exist", ShowSchema = false)]
         [Display(Name = "Put", Description = "Ability to return all interactions for a given customer.")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/")] HttpRequest req, string customerId)
         {
@@ -44,13 +44,13 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
             if (string.IsNullOrEmpty(touchpointId))
             {
                 _logger.LogInformation("Unable to locate 'TouchpointId' in request header.");
-                return new BadRequestObjectResult(HttpStatusCode.BadRequest);
+                return new BadRequestObjectResult("Unable to locate 'TouchpointId' in request header.");
             }
 
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
                 _logger.LogWarning("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
-                return new BadRequestObjectResult(customerGuid);
+                return new BadRequestObjectResult($"Unable to parse 'customerId' to a GUID. Customer GUID: {customerGuid}");
             }
 
             _logger.LogInformation("Header validation has succeeded. Touchpoint ID: {TouchpointId}", touchpointId);
@@ -60,8 +60,8 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
 
             if (!doesCustomerExist)
             {
-                _logger.LogWarning("Customer not found. Customer ID: {CustomerId}.", customerGuid);
-                return new NoContentResult();
+                _logger.LogWarning("Customer does not exist. Customer ID: {CustomerId}.", customerGuid);
+                return new NotFoundObjectResult($"Customer does not exist. Customer ID: {customerGuid}");
             }
 
             _logger.LogInformation("Customer exists. Customer GUID: {CustomerGuid}.", customerGuid);
@@ -71,8 +71,8 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
 
             if (interactions == null || interactions.Count == 0)
             {
-                _logger.LogWarning("No interactions found for Customer ID: {CustomerId}.", customerGuid);
-                return new NoContentResult();
+                _logger.LogWarning("No interaction exists for Customer ID: {CustomerId}.", customerGuid);
+                return new NotFoundObjectResult($"No interaction exists for Customer ID: {customerGuid}");
             }
 
             if (interactions.Count == 1)

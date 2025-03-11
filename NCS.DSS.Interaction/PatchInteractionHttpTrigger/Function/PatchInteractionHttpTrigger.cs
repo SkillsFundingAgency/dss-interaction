@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 using NCS.DSS.Interaction.Cosmos.Helper;
 using NCS.DSS.Interaction.Helpers;
 using NCS.DSS.Interaction.Models;
@@ -37,10 +38,10 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
         [Function("Patch")]
         [ProducesResponseTypeAttribute(typeof(Models.Interaction), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interaction Updated", ShowSchema = true)]
-        [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interaction does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.NotFound, Description = "Interaction does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update an interaction record.")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, string customerId, string interactionId)
@@ -51,14 +52,14 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             if (string.IsNullOrEmpty(touchpointId))
             {
                 _logger.LogInformation("Unable to locate 'TouchpointId' in request header.");
-                return new BadRequestObjectResult(HttpStatusCode.BadRequest);
+                return new BadRequestObjectResult("Unable to locate 'TouchpointId' in request header.");
             }
 
             var ApimURL = _httpRequestMessageHelper.GetDssApimUrl(req);
             if (string.IsNullOrEmpty(ApimURL))
             {
                 _logger.LogInformation("Unable to locate 'apimurl' in request header");
-                return new BadRequestObjectResult(HttpStatusCode.BadRequest);
+                return new BadRequestObjectResult("Unable to locate 'apimurl' in request header");
             }
 
             _logger.LogInformation("Header validation has succeeded. Touchpoint ID: {TouchpointId}.", touchpointId);
@@ -66,13 +67,13 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
                 _logger.LogWarning("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
-                return new BadRequestObjectResult(customerGuid);
+                return new BadRequestObjectResult($"Unable to parse 'customerId' to a GUID. Customer GUID: {customerGuid}");
             }
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
             {
                 _logger.LogWarning("Unable to parse 'interactionId' to a GUID. Interaction ID: {InteractionId}", interactionId);
-                return new BadRequestObjectResult(interactionGuid);
+                return new BadRequestObjectResult($"Unable to parse 'interactionId' to a GUID. Interaction ID: {interactionId}");
             }
 
             _logger.LogInformation("Attempting to retrieve resource from request.");
@@ -84,13 +85,13 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unable to parse {interactionPatchRequest} from request body. Exception: {ExceptionMessage}", nameof(interactionPatchRequest), ex.Message);
-                return new UnprocessableEntityObjectResult(_dynamicHelper.ExcludeProperty(ex, ["TargetSite"]));
+                return new UnprocessableEntityObjectResult($"Unable to extract interaction data from request. Exception is: {ex.Message}");
             }
 
             if (interactionPatchRequest == null)
             {
                 _logger.LogWarning("{interactionPatchRequest} object is NULL.", nameof(interactionPatchRequest));
-                return new UnprocessableEntityObjectResult(req);
+                return new UnprocessableEntityObjectResult($"Please ensure data has been added to the request body. Resource returned NULL when extracted from request for customer {customerId}.");
             }
 
             interactionPatchRequest.LastModifiedTouchpointId = touchpointId;
@@ -112,8 +113,8 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 
             if (!doesCustomerExist)
             {
-                _logger.LogWarning("Customer not found. Customer ID: {CustomerId}.", customerGuid);
-                return new NoContentResult();
+                _logger.LogWarning("Customer does not exist. Customer ID: {CustomerId}.", customerGuid);
+                return new NotFoundObjectResult($"Customer does not exist. Customer ID: {customerGuid}");
             }
 
             _logger.LogInformation("Customer exists. Customer GUID: {CustomerGuid}.", customerGuid);
@@ -124,7 +125,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             if (isCustomerReadOnly)
             {
                 _logger.LogWarning("Customer is read-only. Customer GUID: {CustomerId}.", customerGuid);
-                return new ObjectResult(customerGuid.ToString())
+                return new ObjectResult($"Customer is read-only. Customer GUID: {customerGuid}")
                 {
                     StatusCode = (int)HttpStatusCode.Forbidden
                 };
@@ -135,8 +136,8 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 
             if (interaction == null)
             {
-                _logger.LogWarning("Interaction not found for Customer ID: {CustomerId}, Interaction ID: {InteractionId}.", customerGuid, interactionGuid);
-                return new NoContentResult();
+                _logger.LogWarning("No Interaction with ID {InteractionId} exists for Customer ID: {CustomerId}.", interactionGuid, customerGuid);
+                return new NotFoundObjectResult($"No Interaction exists for Customer ID: {customerGuid}.");
             }
             _logger.LogInformation("Interaction successfully retrieved for Customer With ID {CustomerGuid}. Interaction GUID: {InteractionGuid}", customerGuid, interactionGuid);
 
@@ -156,7 +157,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             {
                 _logger.LogWarning("PATCH request unsuccessful. Interaction GUID: {InteractionGuid}", interactionGuid);
                 _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(PatchInteractionHttpTrigger));
-                return new BadRequestObjectResult(interactionGuid);
+                return new BadRequestObjectResult($"Failed to create interaction for customer ID: {customerGuid}.");
             }
 
             _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(PatchInteractionHttpTrigger));

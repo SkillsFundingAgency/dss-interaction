@@ -36,10 +36,10 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
         [Function("Post")]
         [ProducesResponseType(typeof(Models.Interaction), (int)HttpStatusCode.Created)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Created, Description = "Interaction Created", ShowSchema = true)]
-        [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interaction does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.NotFound, Description = "Interaction does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Interaction validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new interaction resource.")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")] HttpRequest req, string customerId)
@@ -50,14 +50,14 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             if (string.IsNullOrEmpty(touchpointId))
             {
                 _logger.LogInformation("Unable to locate 'TouchpointId' in request header.");
-                return new BadRequestObjectResult(HttpStatusCode.BadRequest);
+                return new BadRequestObjectResult("Unable to locate 'TouchpointId' in request header.");
             }
 
             var ApimURL = _httpRequestMessageHelper.GetDssApimUrl(req);
             if (string.IsNullOrEmpty(ApimURL))
             {
                 _logger.LogInformation("Unable to locate 'apimurl' in request header");
-                return new BadRequestObjectResult(HttpStatusCode.BadRequest);
+                return new BadRequestObjectResult("Unable to locate 'apimurl' in request header");
             }
 
             _logger.LogInformation("Header validation has succeeded. Touchpoint ID: {TouchpointId}.", touchpointId);
@@ -65,7 +65,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
                 _logger.LogWarning("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
-                return new BadRequestObjectResult(customerGuid);
+                return new BadRequestObjectResult($"Unable to parse 'customerId' to a GUID. Customer GUID: {customerGuid}");
             }
 
             _logger.LogInformation("Attempting to retrieve resource from request.");
@@ -77,13 +77,13 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unable to parse {interactionRequest} from request body. Exception: {ExceptionMessage}", nameof(interactionRequest), ex.Message);
-                return new UnprocessableEntityObjectResult(_dynamicHelper.ExcludeProperty(ex, ["TargetSite"]));
+                return new UnprocessableEntityObjectResult($"Unable to extract interaction data from request. Exception is: {ex.Message}");
             }
 
             if (interactionRequest == null)
             {
                 _logger.LogWarning("{interactionRequest} object is NULL.", nameof(interactionRequest));
-                return new UnprocessableEntityObjectResult(req);
+                return new UnprocessableEntityObjectResult($"Please ensure data has been added to the request body. Resource returned NULL when extracted from request for customer {customerId}.");
             }
 
             interactionRequest.SetIds(customerGuid, touchpointId);
@@ -104,8 +104,8 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 
             if (!doesCustomerExist)
             {
-                _logger.LogWarning("Customer not found. Customer ID: {CustomerId}.", customerGuid);
-                return new NoContentResult();
+                _logger.LogWarning("Customer does not exist. Customer ID: {CustomerId}.", customerGuid);
+                return new NotFoundObjectResult($"Customer does not exist. Customer ID: {customerGuid}");
             }
 
             _logger.LogInformation("Customer exists. Customer GUID: {CustomerGuid}.", customerGuid);
@@ -115,7 +115,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             if (isCustomerReadOnly)
             {
                 _logger.LogWarning("Customer is read-only. Customer GUID: {CustomerId}.", customerGuid);
-                return new ObjectResult(customerGuid.ToString())
+                return new ObjectResult($"Customer is read-only. Customer GUID: {customerGuid}")
                 {
                     StatusCode = (int)HttpStatusCode.Forbidden
                 };
@@ -136,7 +136,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             {
                 _logger.LogWarning("POST request unsuccessful. Interaction GUID: {InteractionGuid}", interactionRequest.InteractionId);
                 _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(PostInteractionHttpTrigger));
-                return new BadRequestObjectResult(interactionRequest.InteractionId);
+                return new BadRequestObjectResult($"Failed to create interaction for customer ID: {customerGuid}.");
             }
 
             _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(PostInteractionHttpTrigger));
