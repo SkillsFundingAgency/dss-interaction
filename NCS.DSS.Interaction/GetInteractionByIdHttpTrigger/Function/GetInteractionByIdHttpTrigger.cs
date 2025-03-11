@@ -50,13 +50,13 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
                 _logger.LogWarning("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
-                return new BadRequestObjectResult($"Unable to parse 'customerId' to a GUID. Customer GUID: {customerGuid}");
+                return new BadRequestObjectResult($"Unable to parse 'customerId' to a GUID. Customer GUID: {customerId}");
             }
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
             {
                 _logger.LogWarning("Unable to parse 'interactionId' to a GUID. Interaction ID: {InteractionId}", interactionId);
-                return new BadRequestObjectResult($"Unable to parse 'interactionId' to a GUID. Interaction ID: {interactionGuid}");
+                return new BadRequestObjectResult($"Unable to parse 'interactionId' to a GUID. Interaction ID: {interactionId}");
             }
 
             _logger.LogInformation("Header validation has succeeded. Touchpoint ID: {TouchpointId}", touchpointId);

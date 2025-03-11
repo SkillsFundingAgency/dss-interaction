@@ -67,7 +67,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
                 _logger.LogWarning("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
-                return new BadRequestObjectResult($"Unable to parse 'customerId' to a GUID. Customer GUID: {customerGuid}");
+                return new BadRequestObjectResult($"Unable to parse 'customerId' to a GUID. Customer GUID: {customerId}");
             }
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
