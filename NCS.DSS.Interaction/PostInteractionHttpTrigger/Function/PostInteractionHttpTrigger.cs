@@ -53,10 +53,10 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
-            var ApimURL = _httpRequestMessageHelper.GetDssApimUrl(req);
-            if (string.IsNullOrEmpty(ApimURL))
+            var apimUrl = _httpRequestMessageHelper.GetDssApimUrl(req);
+            if (string.IsNullOrEmpty(apimUrl))
             {
-                _logger.LogInformation("Unable to locate 'apimurl' in request header");
+                _logger.LogInformation("Unable to locate 'apimUrl' in request header");
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
@@ -92,7 +92,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             var errors = _validate.ValidateResource(interactionRequest);
             if (errors != null && errors.Any())
             {
-                _logger.LogWarning("Falied to validate {interactionRequest} object", nameof(interactionRequest));
+                _logger.LogWarning("Failed to validate {interactionRequest} object", nameof(interactionRequest));
                 return new UnprocessableEntityObjectResult(errors);
             }
             _logger.LogInformation("Successfully validated {interactionRequest} object", nameof(interactionRequest));
@@ -128,7 +128,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
             {
                 _logger.LogInformation("Successfully POSTed Interaction in Cosmos DB. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
                 _logger.LogInformation("Attempting to send message to Service Bus Namespace. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
-                await _interactionPostService.SendToServiceBusQueueAsync(interaction, ApimURL);
+                await _interactionPostService.SendToServiceBusQueueAsync(interaction, apimUrl);
                 _logger.LogInformation("Successfully sent message to Service Bus. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
             }
 
