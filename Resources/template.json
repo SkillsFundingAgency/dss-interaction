@@ -8,7 +8,7 @@
     "cosmosDbDatabaseId": {
       "type": "string"
     },
-    "cosmosDbEndpoint": {
+    "CosmosDbEndpoint": {
       "type": "string"
     },
     "cosmosDbKey": {
@@ -64,14 +64,14 @@
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsInstrumentationKey')]",
         "CollectionId": "[parameters('cosmosDbCollectionId')]",
         "DatabaseId": "[parameters('cosmosDbDatabaseId')]",
-        "Endpoint": "[parameters('cosmosDbEndpoint')]",
+        "CosmosDbEndpoint": "[parameters('CosmosDbEndpoint')]",
         "Key": "[parameters('cosmosDbKey')]",
         "CustomerDatabaseId": "customers",
         "CustomerCollectionId": "customers",
         "KeyName": "[parameters('serviceBusAccessKeyName')]",
         "AccessKey": "[parameters('serviceBusAccessKey')]",
         "BaseAddress": "[parameters('serviceBusBaseAddress')]",
-        "QueueName": "[parameters('serviceBusQueueName')]",
+        "QueueName": "[parameters('serviceBusQueueName')]"
       },
       "copy": {
         "name": "FunctionAppSettingsCopy",

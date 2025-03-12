@@ -8,7 +8,7 @@
         public required string CustomerCollectionId { get; set; }
         public required string CustomerDatabaseId { get; set; }
         public required string DatabaseId { get; set; }
-        public required string Endpoint { get; set; }
+        public required string CosmosDbEndpoint { get; set; }
         public required string Key { get; set; }
         public required string KeyName { get; set; }
         public required string QueueName { get; set; }

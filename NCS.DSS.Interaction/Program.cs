@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using DFC.HTTP.Standard;
 using DFC.Swagger.Standard;
@@ -50,10 +51,14 @@ namespace NCS.DSS.Interaction
 
                     services.AddSingleton(s =>
                     {
-                        var settings = s.GetRequiredService<IOptions<InteractionConfigurationSettings>>().Value;
-                        var options = new CosmosClientOptions() { ConnectionMode = ConnectionMode.Gateway };
+                        var cosmosDbEndpoint = configuration["CosmosDbEndpoint"];
+                        if (string.IsNullOrEmpty(cosmosDbEndpoint))
+                        {
+                            throw new InvalidOperationException("CosmosDbEndpoint is not configured.");
+                        }
 
-                        return new CosmosClient(settings.Endpoint, settings.Key, options);
+                        var options = new CosmosClientOptions() { ConnectionMode = ConnectionMode.Gateway };
+                        return new CosmosClient(cosmosDbEndpoint, new DefaultAzureCredential(), options);
                     });
 
                     services.AddSingleton(s =>
