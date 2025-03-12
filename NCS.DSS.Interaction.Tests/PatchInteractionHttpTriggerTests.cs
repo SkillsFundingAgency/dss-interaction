@@ -114,7 +114,7 @@ namespace NCS.DSS.Interaction.Tests
         }
 
         [Test]
-        public async Task PatchInteractionHttpTrigger_ReturnsStatusCodeNoContent_WhenCustomerDoesNotExist()
+        public async Task PatchInteractionHttpTrigger_ReturnsStatusCodeNotFound_WhenCustomerDoesNotExist()
         {
             //Arrange
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
@@ -126,11 +126,11 @@ namespace NCS.DSS.Interaction.Tests
             var result = await RunFunction(ValidCustomerId, ValidInteractionId);
 
             // Assert
-            Assert.That(result, Is.InstanceOf<NoContentResult>());
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
         }
 
         [Test]
-        public async Task PatchInteractionHttpTrigger_ReturnsStatusCodeNoContent_WhenInteractionDoesNotExist()
+        public async Task PatchInteractionHttpTrigger_ReturnsStatusCodeNotFound_WhenInteractionDoesNotExist()
         {
             // Arrange
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
@@ -143,7 +143,7 @@ namespace NCS.DSS.Interaction.Tests
             var result = await RunFunction(ValidCustomerId, ValidInteractionId);
 
             // Assert
-            Assert.That(result, Is.InstanceOf<NoContentResult>());
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
         }
 
         [Test]

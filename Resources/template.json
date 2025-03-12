@@ -71,8 +71,7 @@
         "KeyName": "[parameters('serviceBusAccessKeyName')]",
         "AccessKey": "[parameters('serviceBusAccessKey')]",
         "BaseAddress": "[parameters('serviceBusBaseAddress')]",
-        "QueueName": "[parameters('serviceBusQueueName')]",
-      },
+        "QueueName": "[parameters('serviceBusQueueName')]"      },
       "copy": {
         "name": "FunctionAppSettingsCopy",
         "count": "[length(parameters('functionAppNames'))]"

@@ -31,10 +31,10 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
         [Function("GetById")]
         [ProducesResponseTypeAttribute(typeof(Models.Interaction), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Interaction found", ShowSchema = true)]
-        [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Interaction does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.NotFound, Description = "Interaction does not exist", ShowSchema = false)]
         [Display(Name = "Get", Description = "Ability to retrieve an individual interaction record.")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}")] HttpRequest req, string customerId, string interactionId)
         {
@@ -44,19 +44,19 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
             if (string.IsNullOrEmpty(touchpointId))
             {
                 _logger.LogInformation("Unable to locate 'TouchpointId' in request header.");
-                return new BadRequestObjectResult(HttpStatusCode.BadRequest);
+                return new BadRequestObjectResult("Unable to locate 'TouchpointId' in request header.");
             }
 
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
                 _logger.LogWarning("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
-                return new BadRequestObjectResult(customerGuid);
+                return new BadRequestObjectResult($"Unable to parse 'customerId' to a GUID. Customer GUID: {customerId}");
             }
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
             {
                 _logger.LogWarning("Unable to parse 'interactionId' to a GUID. Interaction ID: {InteractionId}", interactionId);
-                return new BadRequestObjectResult(interactionGuid);
+                return new BadRequestObjectResult($"Unable to parse 'interactionId' to a GUID. Interaction ID: {interactionId}");
             }
 
             _logger.LogInformation("Header validation has succeeded. Touchpoint ID: {TouchpointId}", touchpointId);
@@ -66,8 +66,8 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
 
             if (!doesCustomerExist)
             {
-                _logger.LogWarning("Customer not found. Customer ID: {CustomerId}.", customerGuid);
-                return new NoContentResult();
+                _logger.LogWarning("Customer does not exist. Customer ID: {CustomerId}.", customerGuid);
+                return new NotFoundObjectResult($"Customer does not exist. Customer ID: {customerGuid}");
             }
 
             _logger.LogInformation("Customer exists. Customer GUID: {CustomerGuid}.", customerGuid);
@@ -77,9 +77,9 @@ namespace NCS.DSS.Interaction.GetInteractionByIdHttpTrigger.Function
 
             if (interaction == null)
             {
-                _logger.LogWarning("Interaction not found for Customer ID: {CustomerId}, Interaction ID: {InteractionId}.", customerGuid, interactionGuid);
+                _logger.LogWarning("No interaction exists for Customer ID: {CustomerId}, Interaction ID: {InteractionId}.", customerGuid, interactionGuid);
                 _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(GetInteractionByIdHttpTrigger));
-                return new NoContentResult();
+                return new NotFoundObjectResult($"No interaction exists for Customer ID: {customerGuid}, Interaction ID: {interactionGuid}");
             }
 
             _logger.LogInformation("Interaction successfully retrieved for Customer With ID {CustomerGuid}. Interaction GUID: {InteractionGuid}", customerGuid, interactionGuid);
