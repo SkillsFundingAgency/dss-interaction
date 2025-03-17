@@ -54,10 +54,10 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
-            var ApimURL = _httpRequestMessageHelper.GetDssApimUrl(req);
-            if (string.IsNullOrEmpty(ApimURL))
+            var apimUrl = _httpRequestMessageHelper.GetDssApimUrl(req);
+            if (string.IsNullOrEmpty(apimUrl))
             {
-                _logger.LogInformation("Unable to locate 'apimurl' in request header");
+                _logger.LogInformation("Unable to locate 'apimUrl' in request header");
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
             }
 
@@ -100,7 +100,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 
             if (errors != null && errors.Any())
             {
-                _logger.LogWarning("Falied to validate {interactionPatchRequest} object", nameof(interactionPatchRequest));
+                _logger.LogWarning("Failed to validate {interactionPatchRequest} object", nameof(interactionPatchRequest));
                 return new UnprocessableEntityObjectResult(errors);
             }
             _logger.LogInformation("Successfully validated {interactionPatchRequest} object", nameof(interactionPatchRequest));
@@ -145,9 +145,9 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Function
 
             if (updatedInteraction != null)
             {
-                _logger.LogInformation("Successfully PATCHed Interaction in Cosmos DB. Interaction GUID: {InteractionGuid}", interactionGuid);
+                _logger.LogInformation("Successfully PATCH an Interaction in Cosmos DB. Interaction GUID: {InteractionGuid}", interactionGuid);
                 _logger.LogInformation("Attempting to send message to Service Bus Namespace. Interaction GUID: {InteractionGuid}", interactionGuid);
-                await _interactionPatchService.SendToServiceBusQueueAsync(updatedInteraction, customerGuid, ApimURL);
+                await _interactionPatchService.SendToServiceBusQueueAsync(updatedInteraction, customerGuid, apimUrl);
                 _logger.LogInformation("Successfully sent message to Service Bus. Interaction GUID: {InteractionGuid}", interactionGuid);
 
             }
