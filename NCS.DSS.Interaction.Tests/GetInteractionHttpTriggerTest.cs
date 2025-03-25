@@ -97,7 +97,10 @@ namespace NCS.DSS.Interaction.Tests
             // Arrange
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
-            var listOfInteractiones = new List<Models.Interaction>();
+            var listOfInteractiones = new List<Models.Interaction>() {
+                new Models.Interaction{ InteractionId = Guid.NewGuid() },
+                new Models.Interaction{ InteractionId = Guid.NewGuid() }
+            };
             _getInteractionHttpTriggerService.Setup(x => x.GetInteractionsAsync(It.IsAny<Guid>())).Returns(Task.FromResult<List<Models.Interaction>>(listOfInteractiones));
 
             // Act
