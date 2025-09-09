@@ -11,17 +11,11 @@
         "CosmosDbEndpoint": {
             "value": "__CosmosDbEndpoint__"
         },
-        "cosmosDbKey": {
-            "value": "__CosmosDbKey__"
-        },
         "environmentName": {
             "value": "__NotTokenised__"
         },
         "functionAppNames": {
             "value": "__NotTokenised__"
-        },
-        "serviceBusAccessKey": {
-            "value": "__serviceBusAccessKey__"
         },
         "serviceBusAccessKeyName": {
             "value": "__serviceBusAccessKeyName__"
@@ -49,6 +43,9 @@
         }, 
         "appInsightsInstrumentationKey": {
             "value": "__appInsightsInstrumentationKey__" 
+        },
+        "keyVaultName": {
+            "value": "__SharedKeyVaultName__"
         }
     }
 }
