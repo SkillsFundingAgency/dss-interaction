@@ -29,7 +29,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service
 
             interactionPatch.SetDefaultValues();
 
-            _logger.LogInformation("Patching interaction with ID: {InteractionId}.", interaction.InteractionId);
+            _logger.LogTrace("Patching interaction with ID: {InteractionId}.", interaction.InteractionId);
             interaction.Patch(interactionPatch);
 
 
@@ -37,7 +37,7 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                _logger.LogInformation("Successfully updated interaction with ID: {InteractionId}.", interaction.InteractionId);
+                _logger.LogTrace("Successfully updated interaction with ID: {InteractionId}.", interaction.InteractionId);
                 return interaction;
             }
             else
@@ -50,17 +50,17 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service
 
         public async Task<Models.Interaction> GetInteractionForCustomerAsync(Guid customerId, Guid interactionId)
         {
-            _logger.LogInformation("Retrieving interaction with ID: {InteractionId} for customer ID: {CustomerId}.", interactionId, customerId);
+            _logger.LogTrace("Retrieving interaction with ID: {InteractionId} for customer ID: {CustomerId}.", interactionId, customerId);
 
             var interaction = await _cosmosDbProvider.GetInteractionForCustomerAsync(customerId, interactionId);
 
             if (interaction == null)
             {
-                _logger.LogWarning("No interaction found with ID: {InteractionId} for customer ID: {CustomerId}.", interactionId, customerId);
+                _logger.LogInformation("No interaction found with ID: {InteractionId} for customer ID: {CustomerId}.", interactionId, customerId);
             }
             else
             {
-                _logger.LogInformation("Successfully retrieved interaction with ID: {InteractionId} for customer ID: {CustomerId}.", interactionId, customerId);
+                _logger.LogTrace("Successfully retrieved interaction with ID: {InteractionId} for customer ID: {CustomerId}.", interactionId, customerId);
             }
 
             return interaction;
@@ -70,11 +70,11 @@ namespace NCS.DSS.Interaction.PatchInteractionHttpTrigger.Service
         {
             try
             {
-                _logger.LogInformation("Sending interaction with ID: {InteractionId} to Service Bus for customer ID: {CustomerId}.", interaction.InteractionId, customerId);
+                _logger.LogTrace("Sending interaction with ID: {InteractionId} to Service Bus for customer ID: {CustomerId}.", interaction.InteractionId, customerId);
 
                 await _interactionServiceBusClient.SendPatchMessageAsync(interaction, customerId, reqUrl);
 
-                _logger.LogInformation("Successfully sent interaction with ID: {InteractionId} to Service Bus for customer ID: {CustomerId}.", interaction.InteractionId, customerId);
+                _logger.LogTrace("Successfully sent interaction with ID: {InteractionId} to Service Bus for customer ID: {CustomerId}.", interaction.InteractionId, customerId);
             }
             catch (Exception ex)
             {

@@ -44,7 +44,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
         [Display(Name = "Post", Description = "Ability to create a new interaction resource.")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/")] HttpRequest req, string customerId)
         {
-            _logger.LogInformation("Function {FunctionName} has been invoked", nameof(PostInteractionHttpTrigger));
+            _logger.LogTrace("Function {FunctionName} has been invoked", nameof(PostInteractionHttpTrigger));
 
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
@@ -60,15 +60,15 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
                 return new BadRequestObjectResult("Unable to locate 'apimUrl' in request header");
             }
 
-            _logger.LogInformation("Header validation has succeeded. Touchpoint ID: {TouchpointId}.", touchpointId);
+            _logger.LogTrace("Header validation has succeeded. Touchpoint ID: {TouchpointId}.", touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
-                _logger.LogWarning("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
+                _logger.LogInformation("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
                 return new BadRequestObjectResult($"Unable to parse 'customerId' to a GUID. Customer GUID: {customerId}");
             }
 
-            _logger.LogInformation("Attempting to retrieve resource from request.");
+            _logger.LogTrace("Attempting to retrieve resource from request.");
             Models.Interaction interactionRequest;
             try
             {
@@ -82,64 +82,61 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Function
 
             if (interactionRequest == null)
             {
-                _logger.LogWarning("{interactionRequest} object is NULL.", nameof(interactionRequest));
+                _logger.LogInformation("{interactionRequest} object is NULL.", nameof(interactionRequest));
                 return new UnprocessableEntityObjectResult($"Please ensure data has been added to the request body. Resource returned NULL when extracted from request for customer {customerId}.");
             }
 
             interactionRequest.SetIds(customerGuid, touchpointId);
 
-            _logger.LogInformation("Attempting to validate {interactionRequest} object", nameof(interactionRequest));
+            _logger.LogTrace("Attempting to validate {interactionRequest} object", nameof(interactionRequest));
             var errors = _validate.ValidateResource(interactionRequest);
             if (errors != null && errors.Any())
             {
-                _logger.LogWarning("Failed to validate {interactionRequest} object", nameof(interactionRequest));
+                _logger.LogInformation("Failed to validate {interactionRequest} object", nameof(interactionRequest));
                 return new UnprocessableEntityObjectResult(errors);
             }
-            _logger.LogInformation("Successfully validated {interactionRequest} object", nameof(interactionRequest));
+            _logger.LogTrace("Successfully validated {interactionRequest} object", nameof(interactionRequest));
 
-            _logger.LogInformation("Input validation has succeeded. Touchpoint ID: {TouchpointId}.", touchpointId);
-
-            _logger.LogInformation("Checking if customer exists. Customer ID: {CustomerId}.", customerGuid);
+            _logger.LogTrace("Checking if customer exists. Customer ID: {CustomerId}.", customerGuid);
             var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
             {
-                _logger.LogWarning("Customer does not exist. Customer ID: {CustomerId}.", customerGuid);
+                _logger.LogInformation("Customer does not exist. Customer ID: {CustomerId}.", customerGuid);
                 return new NotFoundObjectResult($"Customer does not exist. Customer ID: {customerGuid}");
             }
 
-            _logger.LogInformation("Customer exists. Customer GUID: {CustomerGuid}.", customerGuid);
+            _logger.LogTrace("Customer exists. Customer GUID: {CustomerGuid}.", customerGuid);
 
-            _logger.LogInformation("Check if customer is read-only. Customer GUID: {CustomerId}.", customerGuid);
+            _logger.LogTrace("Check if customer is read-only. Customer GUID: {CustomerId}.", customerGuid);
             var isCustomerReadOnly = await _resourceHelper.IsCustomerReadOnly(customerGuid);
             if (isCustomerReadOnly)
             {
-                _logger.LogWarning("Customer is read-only. Customer GUID: {CustomerId}.", customerGuid);
+                _logger.LogInformation("Customer is read-only. Customer GUID: {CustomerId}.", customerGuid);
                 return new ObjectResult($"Customer is read-only. Customer GUID: {customerGuid}")
                 {
                     StatusCode = (int)HttpStatusCode.Forbidden
                 };
             }
 
-            _logger.LogInformation("Attempting to POST Interaction in Cosmos DB. Interaction GUID: {InteractionGuid}", interactionRequest.InteractionId);
+            _logger.LogTrace("Attempting to POST Interaction in Cosmos DB. Interaction GUID: {InteractionGuid}", interactionRequest.InteractionId);
             var interaction = await _interactionPostService.CreateAsync(interactionRequest);
 
             if (interaction != null)
             {
-                _logger.LogInformation("Successfully POSTed Interaction in Cosmos DB. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
-                _logger.LogInformation("Attempting to send message to Service Bus Namespace. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
+                _logger.LogTrace("Successfully POSTed Interaction in Cosmos DB. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
+                _logger.LogTrace("Attempting to send message to Service Bus Namespace. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
                 await _interactionPostService.SendToServiceBusQueueAsync(interaction, apimUrl);
-                _logger.LogInformation("Successfully sent message to Service Bus. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
+                _logger.LogTrace("Successfully sent message to Service Bus. Interaction GUID: {InteractionGuid}", interaction.InteractionId);
             }
 
             if (interaction == null)
             {
-                _logger.LogWarning("POST request unsuccessful. Interaction GUID: {InteractionGuid}", interactionRequest.InteractionId);
-                _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(PostInteractionHttpTrigger));
+                _logger.LogInformation("POST request unsuccessful. Interaction GUID: {InteractionGuid}", interactionRequest.InteractionId);
                 return new BadRequestObjectResult($"Failed to create interaction for customer ID: {customerGuid}.");
             }
 
-            _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(PostInteractionHttpTrigger));
+            _logger.LogTrace("Function {FunctionName} has finished invoking", nameof(PostInteractionHttpTrigger));
 
             return new JsonResult(interaction, new JsonSerializerOptions())
             {

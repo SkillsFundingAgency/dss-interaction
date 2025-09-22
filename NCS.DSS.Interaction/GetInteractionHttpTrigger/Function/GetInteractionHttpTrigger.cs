@@ -38,7 +38,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
         [Display(Name = "Put", Description = "Ability to return all interactions for a given customer.")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/")] HttpRequest req, string customerId)
         {
-            _logger.LogInformation("Function {FunctionName} has been invoked", nameof(GetInteractionHttpTrigger));
+            _logger.LogTrace("Function {FunctionName} has been invoked", nameof(GetInteractionHttpTrigger));
 
             var touchpointId = _httpRequestMessageHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
@@ -49,43 +49,43 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Function
 
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
-                _logger.LogWarning("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
+                _logger.LogInformation("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
                 return new BadRequestObjectResult($"Unable to parse 'customerId' to a GUID. Customer GUID: {customerId}");
             }
 
-            _logger.LogInformation("Header validation has succeeded. Touchpoint ID: {TouchpointId}", touchpointId);
+            _logger.LogTrace("Header validation has succeeded. Touchpoint ID: {TouchpointId}", touchpointId);
 
-            _logger.LogInformation("Checking if customer exists. Customer ID: {CustomerId}.", customerGuid);
+            _logger.LogTrace("Checking if customer exists. Customer ID: {CustomerId}.", customerGuid);
             var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
             {
-                _logger.LogWarning("Customer does not exist. Customer ID: {CustomerId}.", customerGuid);
+                _logger.LogInformation("Customer does not exist. Customer ID: {CustomerId}.", customerGuid);
                 return new NotFoundObjectResult($"Customer does not exist. Customer ID: {customerGuid}");
             }
 
-            _logger.LogInformation("Customer exists. Customer GUID: {CustomerGuid}.", customerGuid);
+            _logger.LogTrace("Customer exists. Customer GUID: {CustomerGuid}.", customerGuid);
 
-            _logger.LogInformation("Retrieving interactions for Customer ID: {CustomerId}.", customerGuid);
+            _logger.LogTrace("Retrieving interactions for Customer ID: {CustomerId}.", customerGuid);
             var interactions = await _interactionGetService.GetInteractionsAsync(customerGuid);
 
             if (interactions == null || interactions.Count == 0)
             {
-                _logger.LogWarning("No interaction exists for Customer ID: {CustomerId}.", customerGuid);
+                _logger.LogInformation("No interaction exists for Customer ID: {CustomerId}.", customerGuid);
                 return new NotFoundObjectResult($"No interaction exists for Customer ID: {customerGuid}");
             }
 
             if (interactions.Count == 1)
             {
-                _logger.LogInformation("Single interaction found for Customer ID: {CustomerId}.", customerGuid);
+                _logger.LogTrace("Single interaction found for Customer ID: {CustomerId}.", customerGuid);
                 return new JsonResult(interactions[0], new JsonSerializerOptions())
                 {
                     StatusCode = (int)HttpStatusCode.OK
                 };
             }
 
-            _logger.LogInformation("Multiple interactions retrieved for Customer ID: {CustomerId}. Count: {Count}.", customerGuid, interactions.Count);
-            _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(GetInteractionHttpTrigger));
+            _logger.LogTrace("Multiple interactions retrieved for Customer ID: {CustomerId}. Count: {Count}.", customerGuid, interactions.Count);
+            _logger.LogTrace("Function {FunctionName} has finished invoking", nameof(GetInteractionHttpTrigger));
 
             return new JsonResult(interactions, new JsonSerializerOptions())
             {

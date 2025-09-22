@@ -16,11 +16,11 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Service
 
         public async Task<List<Models.Interaction>> GetInteractionsAsync(Guid customerId)
         {
-            _logger.LogInformation("Retrieving interactions for customer ID: {CustomerId}.", customerId);
+            _logger.LogTrace("Retrieving interactions for customer ID: {CustomerId}.", customerId);
 
             if (customerId == Guid.Empty)
             {
-                _logger.LogWarning("Invalid customer ID provided: {CustomerId}.", customerId);
+                _logger.LogInformation("Invalid customer ID provided: {CustomerId}.", customerId);
                 return null;
             }
 
@@ -32,7 +32,7 @@ namespace NCS.DSS.Interaction.GetInteractionHttpTrigger.Service
             }
             else
             {
-                _logger.LogInformation("Successfully retrieved interaction(s) for customer ID: {CustomerId}.", customerId);
+                _logger.LogTrace("Successfully retrieved interaction(s) for customer ID: {CustomerId}.", customerId);
             }
 
             return interactions;
