@@ -5,8 +5,7 @@
       "default": "Information",
       "Azure.Core": "Warning",
       "Azure.Messaging.ServiceBus": "Warning",
-      "Function": "Warning",
-      "Microsoft.AspNetCore": "Warning"
+      "Function": "Warning"
     },
     "applicationInsights": {
       "samplingSettings": {
