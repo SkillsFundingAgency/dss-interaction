@@ -32,7 +32,7 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Service
 
             if (response.StatusCode == HttpStatusCode.Created)
             {
-                _logger.LogInformation("Successfully created interaction with ID: {InteractionId}.", interaction.InteractionId);
+                _logger.LogTrace("Successfully created interaction with ID: {InteractionId}.", interaction.InteractionId);
                 return response.Resource;
             }
             else
@@ -47,11 +47,11 @@ namespace NCS.DSS.Interaction.PostInteractionHttpTrigger.Service
         {
             try
             {
-                _logger.LogInformation("Sending interaction with ID: {InteractionId} to Service Bus.", interaction.InteractionId);
+                _logger.LogTrace("Sending interaction with ID: {InteractionId} to Service Bus.", interaction.InteractionId);
 
                 await _interactionServiceBusClient.SendPostMessageAsync(interaction, reqUrl);
 
-                _logger.LogInformation("Successfully sent interaction with ID: {InteractionId} to Service Bus.", interaction.InteractionId);
+                _logger.LogTrace("Successfully sent interaction with ID: {InteractionId} to Service Bus.", interaction.InteractionId);
             }
             catch (Exception ex)
             {
