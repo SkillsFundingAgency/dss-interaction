@@ -48,11 +48,11 @@ namespace NCS.DSS.Interaction.ServiceBus
                 MessageId = interaction.CustomerId + " " + DateTime.UtcNow
             };
 
-            _logger.LogInformation("Attempting to send POST message to service bus. Interaction ID: {InteractionId}", interaction.InteractionId);
+            _logger.LogTrace("Attempting to send POST message to service bus. Interaction ID: {InteractionId}", interaction.InteractionId);
 
             await serviceBusSender.SendMessageAsync(msg);
 
-            _logger.LogInformation("Successfully sent POST message to the service bus. Interaction ID: {InteractionId}", interaction.InteractionId);
+            _logger.LogTrace("Successfully sent POST message to the service bus. Interaction ID: {InteractionId}", interaction.InteractionId);
         }
 
         public async Task SendPatchMessageAsync(Models.Interaction interaction, Guid customerId, string reqUrl)
@@ -73,11 +73,11 @@ namespace NCS.DSS.Interaction.ServiceBus
                 MessageId = customerId + " " + DateTime.UtcNow
             };
 
-            _logger.LogInformation("Attempting to send PATCH message to service bus. Interaction ID: {InteractionId}", interaction.InteractionId);
+            _logger.LogTrace("Attempting to send PATCH message to service bus. Interaction ID: {InteractionId}", interaction.InteractionId);
 
             await serviceBusSender.SendMessageAsync(msg);
 
-            _logger.LogInformation("Successfully sent PATCH message to the service bus. Interaction ID: {InteractionId}", interaction.InteractionId);
+            _logger.LogTrace("Successfully sent PATCH message to the service bus. Interaction ID: {InteractionId}", interaction.InteractionId);
         }
     }
 }

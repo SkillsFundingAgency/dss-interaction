@@ -89,6 +89,7 @@ namespace NCS.DSS.Interaction
                     {
                         LoggerFilterRule toRemove = options.Rules.FirstOrDefault(rule => rule.ProviderName
                             == "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider");
+                        options.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
                         if (toRemove is not null)
                         {
                             options.Rules.Remove(toRemove);

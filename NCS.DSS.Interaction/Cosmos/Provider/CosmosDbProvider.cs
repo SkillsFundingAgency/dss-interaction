@@ -30,7 +30,7 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
         {
             try
             {
-                _logger.LogInformation("Checking for customer resource. Customer ID: {CustomerId}", customerId);
+                _logger.LogTrace("Checking for customer resource. Customer ID: {CustomerId}", customerId);
 
                 var response = await _customerContainer.ReadItemAsync<Customer>(
                     customerId.ToString(),
@@ -38,7 +38,7 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
 
                 if (response.Resource != null)
                 {
-                    _logger.LogInformation("Customer exists. Customer ID: {CustomerId}", customerId);
+                    _logger.LogTrace("Customer exists. Customer ID: {CustomerId}", customerId);
                     return true;
                 }
 
@@ -59,7 +59,7 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
 
         public async Task<bool> DoesCustomerHaveATerminationDate(Guid customerId)
         {
-            _logger.LogInformation("Checking for termination date. Customer ID: {CustomerId}", customerId);
+            _logger.LogTrace("Checking for termination date. Customer ID: {CustomerId}", customerId);
 
             try
             {
@@ -70,12 +70,11 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
                 var dateOfTermination = response.Resource?.DateOfTermination;
                 var hasTerminationDate = dateOfTermination != null;
 
-                _logger.LogInformation("Termination date check completed. CustomerId: {CustomerId}. HasTerminationDate: {HasTerminationDate}", customerId, hasTerminationDate);
+                _logger.LogTrace("Termination date check completed. CustomerId: {CustomerId}. HasTerminationDate: {HasTerminationDate}", customerId, hasTerminationDate);
                 return hasTerminationDate;
             }
             catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                // If a 404 occurs, the resource does not exist
                 _logger.LogInformation("Customer does not exist. Customer ID: {CustomerId}", customerId);
                 return false;
             }
@@ -88,7 +87,7 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
 
         public async Task<Models.Interaction> GetInteractionAsync(Guid interactionId)
         {
-            _logger.LogInformation("Retrieving Interaction. Interaction ID: {InteractionId}", interactionId);
+            _logger.LogTrace("Retrieving Interaction. Interaction ID: {InteractionId}", interactionId);
 
             try
             {
@@ -98,11 +97,11 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
 
                 if (response?.Resource != null)
                 {
-                    _logger.LogInformation("Interaction retrieved successfully. Interaction ID: {InertactionId}", interactionId);
+                    _logger.LogTrace("Interaction retrieved successfully. Interaction ID: {InertactionId}", interactionId);
                     return response.Resource;
                 }
 
-                _logger.LogWarning("Interaction not found. Interaction ID: {InertactionId}", interactionId);
+                _logger.LogInformation("Interaction not found. Interaction ID: {InertactionId}", interactionId);
                 return null;
             }
             catch (Exception ex)
@@ -114,7 +113,7 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
 
         public async Task<Models.Interaction> GetInteractionForCustomerAsync(Guid customerId, Guid interactionId)
         {
-            _logger.LogInformation("Retrieving Interaction for Customer. Customer ID: {CustomerId}. Interaction ID: {InteractionId}", customerId, interactionId);
+            _logger.LogTrace("Retrieving Interaction for Customer. Customer ID: {CustomerId}. Interaction ID: {InteractionId}", customerId, interactionId);
 
             try
             {
@@ -125,11 +124,11 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
                 var response = await query.ReadNextAsync();
                 if (response.Any())
                 {
-                    _logger.LogInformation("Interaction retrieved successfully. Customer ID: {CustomerId}. Interaction ID: {InteractionId}", customerId, interactionId);
+                    _logger.LogTrace("Interaction retrieved successfully. Customer ID: {CustomerId}. Interaction ID: {InteractionId}", customerId, interactionId);
                     return response.FirstOrDefault();
                 }
 
-                _logger.LogWarning("Interaction not found. Interaction ID: {InertactionId}", interactionId);
+                _logger.LogInformation("Interaction not found. Interaction ID: {InertactionId}", interactionId);
                 return null;
             }
             catch (Exception ex)
@@ -141,7 +140,7 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
 
         public async Task<List<Models.Interaction>> GetInteractionsForCustomerAsync(Guid customerId)
         {
-            _logger.LogInformation("Retrieving interactions for customer. Customer ID: {CustomerId}.", customerId);
+            _logger.LogTrace("Retrieving interactions for customer. Customer ID: {CustomerId}.", customerId);
 
             try
             {
@@ -157,7 +156,7 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
                     interactions.AddRange(response);
                 }
 
-                _logger.LogInformation("Retrieved {Count} interaction(s) for Customer ID: {CustomerId}.", interactions.Count, customerId);
+                _logger.LogTrace("Retrieved {Count} interaction(s) for Customer ID: {CustomerId}.", interactions.Count, customerId);
                 return interactions;
             }
             catch (Exception ex)
@@ -171,16 +170,16 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
         {
             if (interaction == null)
             {
-                _logger.LogWarning("Interaction object is null. Creation aborted.");
+                _logger.LogInformation("Interaction object is null. Creation aborted.");
                 throw new ArgumentNullException(nameof(interaction), "Interaction cannot be null.");
             }
 
-            _logger.LogInformation("Creating Interaction with ID: {InteractionId}", interaction.InteractionId);
+            _logger.LogTrace("Creating Interaction with ID: {InteractionId}", interaction.InteractionId);
 
             try
             {
                 var response = await _interactionContainer.CreateItemAsync(interaction, PartitionKey.None);
-                _logger.LogInformation("Successfully created Interaction with ID: {InteractionId}", interaction.InteractionId);
+                _logger.LogTrace("Successfully created Interaction with ID: {InteractionId}", interaction.InteractionId);
                 return response;
             }
             catch (Exception ex)
@@ -194,16 +193,16 @@ namespace NCS.DSS.Interaction.Cosmos.Provider
         {
             if (interaction == null)
             {
-                _logger.LogWarning("Interaction object is null. Update aborted.");
+                _logger.LogInformation("Interaction object is null. Update aborted.");
                 throw new ArgumentNullException(nameof(interaction), "Interaction cannot be null.");
             }
 
-            _logger.LogInformation("Updating Interaction with ID: {InteractionId}", interaction.InteractionId);
+            _logger.LogTrace("Updating Interaction with ID: {InteractionId}", interaction.InteractionId);
 
             try
             {
                 var response = await _interactionContainer.ReplaceItemAsync(interaction, interaction.InteractionId.ToString());
-                _logger.LogInformation("Successfully updated Interaction with ID: {InteractionId}", interaction.InteractionId);
+                _logger.LogTrace("Successfully updated Interaction with ID: {InteractionId}", interaction.InteractionId);
                 return response;
             }
             catch (Exception ex)
